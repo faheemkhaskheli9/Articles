@@ -1,0 +1,24 @@
+name: Verified mistake memory example
+on:
+  push:
+    paths:
+      - 'articles/your-ai-agent-didnt-learn-it-just-remembered/**'
+      - 'examples/verified-mistake-memory/**'
+      - '.github/workflows/verified-mistake-memory.yml'
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/verified-mistake-memory
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: python -m compileall -q memory_agent.py openai_demo.py
+      - run: python memory_agent.py

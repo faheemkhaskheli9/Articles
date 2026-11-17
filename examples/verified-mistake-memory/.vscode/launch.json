@@ -1,0 +1,7 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {"name": "Offline verified-memory demo", "type": "debugpy", "request": "launch", "program": "${workspaceFolder}/memory_agent.py", "console": "integratedTerminal"},
+    {"name": "Run memory tests", "type": "debugpy", "request": "launch", "module": "pytest", "args": ["-q", "tests"], "console": "integratedTerminal"}
+  ]
+}

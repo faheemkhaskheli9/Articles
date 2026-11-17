@@ -4,6 +4,7 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 ## Articles
 
+- [Your AI Agent Didn't Learn. It Just Remembered.](articles/your-ai-agent-didnt-learn-it-just-remembered/article.md) — [Verified mistake-memory Python example](examples/verified-mistake-memory/README.md)
 - [Your Fastest AI Model Might Be Your Most Expensive Deployment](articles/edge-inference-economics/article.md) — [Edge inference economics Python example](examples/edge-inference-economics/README.md)
 - [Stop Making Your LLM Solve the Same Problem Twice](articles/reasoning-cache/article.md) — [Reasoning-cache Python example](examples/reasoning-cache/README.md)
 - [The Tool Call Was Correct. The AI Agent Was Still Wrong](articles/the-tool-call-was-correct-the-ai-agent-was-still-wrong/source.md) — [Agent evaluation example](examples/agent-reliability/README.md)

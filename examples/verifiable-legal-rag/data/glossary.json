@@ -1,0 +1,26 @@
+{
+  "_note": "Small hand-built Urdu and Roman Urdu glossary for this tutorial's fixtures only. It is not a translation system; production retrieval needs multilingual embeddings or translation plus evaluation.",
+  "phrases": {
+    "سیکیورٹی ڈپازٹ": "security deposit",
+    "مالک مکان": "landlord",
+    "کرایہ دار": "tenant",
+    "آگے کرائے پر": "sublet",
+    "کرایہ": "rent",
+    "مکان": "premises",
+    "بڑھا": "increase",
+    "واپس": "returned",
+    "دن": "days",
+    "بجلی": "electricity",
+    "کاٹ": "cut off",
+    "تالے": "locks",
+    "makan malik": "landlord",
+    "kirayedar": "tenant",
+    "kiraya": "rent",
+    "wapas": "returned",
+    "din": "days",
+    "bijli": "electricity",
+    "kaat": "cut off",
+    "kharab": "defective",
+    "cheez": "goods"
+  }
+}

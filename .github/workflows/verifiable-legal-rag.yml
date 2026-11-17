@@ -1,0 +1,27 @@
+name: Verifiable legal RAG example
+on:
+  push:
+    paths:
+      - 'articles/verifiable-legal-rag/**'
+      - 'examples/verifiable-legal-rag/**'
+      - 'tools/build_medium_html.py'
+      - '.github/workflows/verifiable-legal-rag.yml'
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/verifiable-legal-rag
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install -e .
+      - run: python -m pytest -q
+      - run: python -m legal_rag verify-fixtures
+      - run: python -m legal_rag evaluate
+      - run: python ../../tools/build_medium_html.py verifiable-legal-rag --check

@@ -1,0 +1,75 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Legal RAG: Ask (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "args": ["ask", "How long is the notice to vacate a landlord must serve?"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Ask in Urdu (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "args": ["ask", "--json", "سیکیورٹی ڈپازٹ کتنے دن میں واپس ہونا چاہیے؟"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Ask with LLM (.env required)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "args": ["--generator", "openai", "ask", "--json", "Can a landlord cut off electricity to make a tenant leave?"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Evaluate answer/abstain",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "args": ["evaluate"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Threshold sweep",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "args": ["sweep"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Verify adversarial drafts",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "args": ["verify-fixtures"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}",
+      "args": ["-q"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

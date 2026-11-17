@@ -4,6 +4,7 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 ## Articles
 
+- [Your Legal AI Cited Section 4. Did Section 4 Actually Say That?](articles/verifiable-legal-rag/article.md) — [Verifiable legal RAG Python example](examples/verifiable-legal-rag/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/verifiable-legal-rag/)
 - [Your AI Agent Didn't Learn. It Just Remembered.](articles/your-ai-agent-didnt-learn-it-just-remembered/article.md) — [Verified mistake-memory Python example](examples/verified-mistake-memory/README.md)
 - [Your Fastest AI Model Might Be Your Most Expensive Deployment](articles/edge-inference-economics/article.md) — [Edge inference economics Python example](examples/edge-inference-economics/README.md)
 - [Stop Making Your LLM Solve the Same Problem Twice](articles/reasoning-cache/article.md) — [Reasoning-cache Python example](examples/reasoning-cache/README.md)
@@ -18,6 +19,17 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 - Include companion projects in `examples/<slug>/` with setup instructions, requirements, `.env.example` when applicable, tests, and VS Code launch configuration.
 - Verify claims and link research sources. Distinguish reported research results from measurements taken in the example.
 - Run relevant tests and commit articles and their companion code to Git. Never commit credentials.
+
+## Publishing to Medium: import the HTML edition
+
+Do not paste Markdown into Medium. It leaves empty numbered items, blank code blocks and code squeezed onto one line. Instead:
+
+1. Build the HTML edition: `python tools/build_medium_html.py <slug>` (writes `articles/<slug>/index.html`).
+2. Commit and push; GitHub Pages serves it at `https://faheemkhaskheli9.github.io/Articles/articles/<slug>/`.
+3. In Medium, open **Import a story** (https://medium.com/p/import), paste that URL and import.
+4. Review the imported draft once before publishing, especially code blocks.
+
+The builder keeps list items in one tight list, writes code as `<pre>` with `<br>` line breaks, drops blank lines inside code and refuses empty blocks or split numbered lists. `python tools/build_medium_html.py <slug> --check` fails when the HTML is out of date.
 
 ## Medium mobile limitation
 

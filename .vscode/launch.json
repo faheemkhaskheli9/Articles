@@ -92,6 +92,109 @@
         "PYTHONPATH": "${workspaceFolder}/examples/agent-reliability/src"
       },
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Ask (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/verifiable-legal-rag/src"
+      },
+      "args": [
+        "ask",
+        "How long is the notice to vacate a landlord must serve?"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Ask in Urdu (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/verifiable-legal-rag/src"
+      },
+      "args": [
+        "ask",
+        "--json",
+        "سیکیورٹی ڈپازٹ کتنے دن میں واپس ہونا چاہیے؟"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Ask with LLM (.env required)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "envFile": "${workspaceFolder}/examples/verifiable-legal-rag/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/verifiable-legal-rag/src"
+      },
+      "args": [
+        "--generator",
+        "openai",
+        "ask",
+        "--json",
+        "Can a landlord cut off electricity to make a tenant leave?"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Evaluate answer/abstain",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/verifiable-legal-rag/src"
+      },
+      "args": [
+        "evaluate"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Threshold sweep",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/verifiable-legal-rag/src"
+      },
+      "args": [
+        "sweep"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: Verify adversarial drafts",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "legal_rag",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/verifiable-legal-rag/src"
+      },
+      "args": [
+        "verify-fixtures"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Legal RAG: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}/examples/verifiable-legal-rag",
+      "args": [
+        "-q"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

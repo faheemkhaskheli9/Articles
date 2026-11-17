@@ -4,6 +4,7 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 ## Articles
 
+- [My AI Controller Earned More Reward. It Reached Fewer Targets.](articles/reward-is-not-success/article.md) — [Runnable proxy-vs-goal example](examples/reward-is-not-success/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/reward-is-not-success/)
 - [Stop Asking Your LLM to Write Safe SQL. Make the Database Refuse Unsafe SQL.](articles/text-to-sql-guard/article.md) — [Text-to-SQL guard Python example](examples/text-to-sql-guard/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/text-to-sql-guard/)
 - [Your AI Agent Understood the Request. Did It Send the Right Amount?](articles/multilingual-tool-guard/article.md) — [Multilingual tool-call guard Python example](examples/multilingual-tool-guard/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/multilingual-tool-guard/)
 - [Your AI Cited a Source. Did the Source Actually Say That?](articles/verifiable-legal-rag/article.md) — [Verifiable legal RAG Python example](examples/verifiable-legal-rag/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/verifiable-legal-rag/)

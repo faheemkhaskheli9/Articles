@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run paired reward/goal experiment",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/reward_gap.py",
+      "args": [
+        "--episodes",
+        "200",
+        "--seed",
+        "42",
+        "--steps",
+        "16",
+        "--slip-rate",
+        "0.30"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-q",
+        "tests"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

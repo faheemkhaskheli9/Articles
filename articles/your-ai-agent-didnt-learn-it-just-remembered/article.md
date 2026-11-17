@@ -50,7 +50,7 @@ The prototype follows this sequence:
 
 In the [Brain implementation](https://github.com/faheemkhaskheli9/Brain/blob/main/research/llm_mistake_learning.py), the model and verifier are separate callbacks. In the companion tutorial they remain separate, so you can test the feedback loop with no API key and optionally plug in a real model.
 
-An important limitation: the application must actually control the verifier. If a model can mark its own answer "verified" and write into trusted memory, the gate is cosmetic.
+An important limitation: the application must actually control the verifier. If a model can mark its own answer "verified" and write into trusted memory, the gate is cosmetic. The companion now **revalidates every persisted answer during load** and rejects a verifier result that is not a real Boolean. This protects against some corrupted-memory cases, **not** against tampering with a correct lesson's guidance, a compromised verifier, or a forged provenance label. A trusted storage and review layer is still required.
 
 ## Build the smallest possible experiment
 
@@ -87,7 +87,7 @@ The offline fixture evaluates two *different* word-pair tasks after recording th
 | Deterministic toy, memory disabled | 0 | 2 |
 | Deterministic toy, memory enabled | 2 | 2 |
 
-The repository's tests pass locally, including deliberate bad-correction proposals, cross-scope isolation, conflicting lessons, missing ground truth, and exact training/test leakage.
+The repository's 16 tests pass locally, including corrupted saved memory, invalid verifier verdicts, misleading retrieval thresholds, unverified gold labels, conflicting lessons, missing ground truth, and exact training/test leakage. An explicit negative test demonstrates that apparently correct feedback can still carry malicious guidance.
 
 These numbers are **not an LLM benchmark**. The toy model was intentionally written to use any retrieved lesson to fix the exact type of error. Two examples do not estimate population accuracy, semantic generalization, real-world costs, or the quality of a production retrieval system.
 
@@ -140,6 +140,8 @@ The implementation is deliberately small enough to inspect. The challenging part
 A model that retrieves a correction is not necessarily a model that has learned. But an application that consistently validates, remembers, and reuses corrections can still become more reliable—if its evaluation survives an adversarial test.
 
 ---
+
+**Adversarial audit:** [Confirmed attack reproductions, fixes, and remaining risks](adversarial-review.md).
 
 **Project basis:** [Brain — verified-feedback mistake learning](https://github.com/faheemkhaskheli9/Brain/blob/main/research/llm-mistake-learning.md) and [runnable source](https://github.com/faheemkhaskheli9/Brain/blob/main/research/llm_mistake_learning.py).
 

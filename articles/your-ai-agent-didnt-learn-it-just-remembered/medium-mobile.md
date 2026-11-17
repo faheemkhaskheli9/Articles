@@ -50,7 +50,7 @@ Step seven: The later answer is checked independently. Success is measured on fr
 
 In the Brain implementation (https://github.com/faheemkhaskheli9/Brain/blob/main/research/llm_mistake_learning.py), the model and verifier are separate callbacks. In the companion tutorial they remain separate, so you can test the feedback loop with no API key and optionally plug in a real model.
 
-An important limitation: the application must actually control the verifier. If a model can mark its own answer "verified" and write into trusted memory, the gate is cosmetic.
+An important limitation: the application must actually control the verifier. If a model can mark its own answer "verified" and write into trusted memory, the gate is cosmetic. The companion now revalidates every persisted answer during load and rejects a verifier result that is not a real Boolean. This protects against some corrupted-memory cases, not against tampering with a correct lesson's guidance, a compromised verifier, or a forged provenance label. A trusted storage and review layer is still required.
 
 BUILD THE SMALLEST POSSIBLE EXPERIMENT
 
@@ -70,7 +70,7 @@ THE RESULT—AND WHAT IT DOESN'T PROVE
 
 The offline fixture evaluates two different word-pair tasks after recording the correction. Memory off: 0 of 2 correct. Memory on: 2 of 2 correct. This is a deterministic synthetic demo, not an LLM benchmark.
 
-The repository's tests pass locally, including deliberate bad-correction proposals, cross-scope isolation, conflicting lessons, missing ground truth, and exact training/test leakage.
+The repository's 16 tests pass locally, including corrupted saved memory, invalid verifier verdicts, misleading retrieval thresholds, unverified gold labels, conflicting lessons, missing ground truth, and exact training/test leakage. An explicit negative test demonstrates that apparently correct feedback can still carry malicious guidance.
 
 These numbers are not an LLM benchmark. The toy model was intentionally written to use any retrieved lesson to fix the exact type of error. Two examples do not estimate population accuracy, semantic generalization, real-world costs, or the quality of a production retrieval system.
 
@@ -78,17 +78,17 @@ A live-model adapter is included to show the integration point. Its results are 
 
 ADVERSARIAL REVIEW: SIX WAYS A MEMORY SYSTEM FOOLS YOU
 
-1. The same model grades itself. A fluent explanation of why an answer was wrong is not independent evidence. For deterministic workloads, use executable tests and reference data. For subjective work, use carefully designed human review or multiple evidence sources—without treating their agreement as proof.
+Risk One: The same model grades itself. A fluent explanation of why an answer was wrong is not independent evidence. For deterministic workloads, use executable tests and reference data. For subjective work, use carefully designed human review or multiple evidence sources—without treating their agreement as proof.
 
-2. A fix is retrieved for the wrong task. Similar wording does not imply identical policy. A lesson about one country's tax policy should not be applied to another. Retrieval should include explicit policy version, applicability conditions, and a safe fallback.
+Risk Two: A fix is retrieved for the wrong task. Similar wording does not imply identical policy. A lesson about one country's tax policy should not be applied to another. Retrieval should include explicit policy version, applicability conditions, and a safe fallback.
 
-3. Lessons cross user or tenant boundaries. A scope string can filter demo data, but it is not authorization. Production systems need authenticated identity, access control, encryption, deletion, and audit trails.
+Risk Three: Lessons cross user or tenant boundaries. A scope string can filter demo data, but it is not authorization. Production systems need authenticated identity, access control, encryption, deletion, and audit trails.
 
-4. The memory contains an instruction attack. Retrieved text is lower-trust material. Do not promote a stored lesson into a system or developer instruction, and never allow it to grant tool privileges. Prompt boundaries reduce risk but cannot guarantee immunity from injection.
+Risk Four: The memory contains an instruction attack. Retrieved text is lower-trust material. Do not promote a stored lesson into a system or developer instruction, and never allow it to grant tool privileges. Prompt boundaries reduce risk but cannot guarantee immunity from injection.
 
-5. You evaluated on the mistakes you stored. Training on "Last word: green purple" and later reporting success on that exact sentence tells you little about transfer. Freeze the held-out set before feedback collection and audit paraphrases and near-duplicates. The demo rejects exact overlaps only.
+Risk Five: You evaluated on the mistakes you stored. Training on "Last word: green purple" and later reporting success on that exact sentence tells you little about transfer. Freeze the held-out set before feedback collection and audit paraphrases and near-duplicates. The demo rejects exact overlaps only.
 
-6. Additional context costs more than it saves. Each retrieval can add tokens, latency, false matches, and future maintenance work. Track benefit after verifier calls, retrieval, model retries, and rollback costs—not just the number of corrected answers.
+Risk Six: Additional context costs more than it saves. Each retrieval can add tokens, latency, false matches, and future maintenance work. Track benefit after verifier calls, retrieval, model retries, and rollback costs—not just the number of corrected answers.
 
 A seventh failure deserves attention: a once-correct lesson can become stale. Version memories against tools, policies, and source data, and require an expiration or revalidation strategy before using them in consequential actions.
 
@@ -113,6 +113,8 @@ The repository also includes requirements-llm.txt, .env.example, openai_demo.py,
 The implementation is deliberately small enough to inspect. The challenging part is not serializing a lesson to JSON. It is obtaining a trustworthy correction, proving relevance on the next task, and measuring whether the system's behavior improved without causing new errors.
 
 A model that retrieves a correction is not necessarily a model that has learned. But an application that consistently validates, remembers, and reuses corrections can still become more reliable—if its evaluation survives an adversarial test.
+
+Adversarial audit (confirmed attacks, fixes and remaining risks): https://github.com/faheemkhaskheli9/Articles/blob/main/articles/your-ai-agent-didnt-learn-it-just-remembered/adversarial-review.md
 
 Project basis: Brain — verified-feedback mistake learning (https://github.com/faheemkhaskheli9/Brain/blob/main/research/llm-mistake-learning.md) and runnable source (https://github.com/faheemkhaskheli9/Brain/blob/main/research/llm_mistake_learning.py).
 

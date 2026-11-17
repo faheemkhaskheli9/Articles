@@ -1,6 +1,6 @@
 # Verifiable Legal RAG: Runnable Companion
 
-Companion code for the article [Your Legal AI Cited Section 4. Did Section 4 Actually Say That?](../../articles/verifiable-legal-rag/article.md), based on the approach in [pakistani-lawyer-ai](https://github.com/faheemkhaskheli9/pakistani-lawyer-ai).
+Companion code for the article [Your AI Cited a Source. Did the Source Actually Say That?](../../articles/verifiable-legal-rag/article.md), based on the approach in [pakistani-lawyer-ai](https://github.com/faheemkhaskheli9/pakistani-lawyer-ai).
 
 The pipeline chunks statutes by provision, retrieves with BM25, abstains when evidence is weak, requires every generated claim to carry a citation and a verbatim quote, and verifies both before showing an answer.
 

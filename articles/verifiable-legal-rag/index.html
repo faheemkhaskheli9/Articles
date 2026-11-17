@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Your Legal AI Cited Section 4. Did Section 4 Actually Say That?</title>
-<meta name="description" content="By Faheem Khaskheli · November 17, 2026 · RAG / Legal AI / Python">
+<title>Your AI Cited a Source. Did the Source Actually Say That?</title>
+<meta name="description" content="By Faheem Khaskheli · November 17, 2026 · RAG / LLM Reliability / Python">
 <meta name="author" content="Faheem Khaskheli">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Your Legal AI Cited Section 4. Did Section 4 Actually Say That?">
+<meta property="og:title" content="Your AI Cited a Source. Did the Source Actually Say That?">
 <link rel="canonical" href="https://faheemkhaskheli9.github.io/Articles/articles/verifiable-legal-rag/">
 <!-- Generated from article.md by tools/build_medium_html.py. Do not edit by hand. -->
 </head>
 <body>
 <article>
-<h1>Your Legal AI Cited Section 4. Did Section 4 Actually Say That?</h1>
-<p><em>Build a Python RAG pipeline that verifies every citation, rejects edited quotes, and refuses to answer when the evidence is weak.</em></p>
-<p>By Faheem Khaskheli · November 17, 2026 · RAG / Legal AI / Python</p>
+<h1>Your AI Cited a Source. Did the Source Actually Say That?</h1>
+<p><em>How to build a RAG pipeline that verifies every citation, rejects edited quotes, and refuses to answer when the evidence is weak, shown with a legal assistant in Python.</em></p>
+<p>By Faheem Khaskheli · November 17, 2026 · RAG / LLM Reliability / Python</p>
 <p>A legal assistant that answers without a source is easy to distrust. A legal assistant that answers <strong>with</strong> a source is more dangerous, because the citation makes a wrong answer look checked.</p>
 <p>While building <a href="https://github.com/faheemkhaskheli9/pakistani-lawyer-ai">pakistani-lawyer-ai</a>, a citation-grounded assistant for English, Urdu and Roman Urdu questions, I learned that "the answer has a citation" proves very little. The cited section can be real but say something different. The quote can be edited. The model can cite a provision that was never retrieved, or one that does not exist. And when the question is off-topic, a naive pipeline still answers. My own repository README records exactly that gap: an off-topic question returned an "answered" result instead of the "no relevant source found" fallback.</p>
 <p>This is not only a hobby-project problem. A preregistered study of commercial legal research tools found that RAG reduced hallucinations compared with a general chatbot, but the <a href="https://law.stanford.edu/publications/hallucination-free/">Lexis+ AI and Thomson Reuters tools still hallucinated more than 17% of the time</a>. The study counts an answer as a hallucination when it contains incorrect information or falsely claims that a source supports it.</p>

@@ -1,8 +1,8 @@
-# Your Legal AI Cited Section 4. Did Section 4 Actually Say That?
+# Your AI Cited a Source. Did the Source Actually Say That?
 
-*Build a Python RAG pipeline that verifies every citation, rejects edited quotes, and refuses to answer when the evidence is weak.*
+*How to build a RAG pipeline that verifies every citation, rejects edited quotes, and refuses to answer when the evidence is weak, shown with a legal assistant in Python.*
 
-By Faheem Khaskheli · November 17, 2026 · RAG / Legal AI / Python
+By Faheem Khaskheli · November 17, 2026 · RAG / LLM Reliability / Python
 
 A legal assistant that answers without a source is easy to distrust. A legal assistant that answers **with** a source is more dangerous, because the citation makes a wrong answer look checked.
 

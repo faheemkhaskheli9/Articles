@@ -4,7 +4,7 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 ## Articles
 
-- [Your Legal AI Cited Section 4. Did Section 4 Actually Say That?](articles/verifiable-legal-rag/article.md) — [Verifiable legal RAG Python example](examples/verifiable-legal-rag/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/verifiable-legal-rag/)
+- [Your AI Cited a Source. Did the Source Actually Say That?](articles/verifiable-legal-rag/article.md) — [Verifiable legal RAG Python example](examples/verifiable-legal-rag/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/verifiable-legal-rag/)
 - [Your AI Agent Didn't Learn. It Just Remembered.](articles/your-ai-agent-didnt-learn-it-just-remembered/article.md) — [Verified mistake-memory Python example](examples/verified-mistake-memory/README.md)
 - [Your Fastest AI Model Might Be Your Most Expensive Deployment](articles/edge-inference-economics/article.md) — [Edge inference economics Python example](examples/edge-inference-economics/README.md)
 - [Stop Making Your LLM Solve the Same Problem Twice](articles/reasoning-cache/article.md) — [Reasoning-cache Python example](examples/reasoning-cache/README.md)

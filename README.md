@@ -1,30 +1,30 @@
 # Articles
 
-Medium-importable technical articles with their complete runnable companion implementations.
+Implementation-first AI engineering articles in **Markdown**, accompanied by complete runnable projects.
 
 ## Articles
 
-- [The Tool Call Was Correct. The AI Agent Was Still Wrong](articles/the-tool-call-was-correct-the-ai-agent-was-still-wrong/index.html) — [Runnable AI-agent evaluation companion](examples/agent-reliability/README.md)
-- [Stop Making Your LLM Solve the Same Problem Twice](articles/reasoning-cache/index.html) — [Runnable Python example](examples/reasoning-cache/README.md)
+- [Stop Making Your LLM Solve the Same Problem Twice](articles/reasoning-cache/article.md) — [Reasoning-cache Python example](examples/reasoning-cache/README.md)
+- [The Tool Call Was Correct. The AI Agent Was Still Wrong](articles/the-tool-call-was-correct-the-ai-agent-was-still-wrong/source.md) — [Agent evaluation example](examples/agent-reliability/README.md)
 
-## Publish the HTML to Medium
+## Article format: Markdown is the source of truth
 
-**Use the special import edition for Medium, not the full HTML tutorial.** Medium uses a third-party importer that may discard CSS and collapse multi-line <pre> code blocks. No HTML source can guarantee 1:1 reproduction in Medium. The full technical page remains intact for readers and links to the complete code.
+**All future articles and substantial revisions must be committed as Markdown (.md), not HTML.** Use `articles/<slug>/article.md` for new articles. Older HTML files remain available only to avoid breaking existing URLs; they are not the editable article source.
 
-1. In GitHub **Settings → Pages → Build and deployment**, enable **Deploy from a branch**: `main` / `/(root)` (if not already enabled).
-2. Verify the Medium-specific public URL opens in a normal browser: `https://faheemkhaskheli9.github.io/Articles/articles/reasoning-cache/medium/`.
-3. In **Medium's desktop web interface**, choose **Stories → Import a story** and paste this **Medium-specific URL** (not the raw GitHub source and not a local HTML file).
-4. Review the imported draft. Headings, paragraphs, emphasis, lists, and links are deliberately simple; Medium still controls its rendering. Insert native **{ }** code blocks manually if you need full Python snippets within the Medium story.
-5. Medium automatically associates an imported story with the original URL via canonical metadata. Decide which site should be canonical before publishing.
+- Use GitHub-flavored Markdown headings, links, numbered steps, and fenced, language-labeled code blocks.
+- Prioritize practical implementation: when to use the technique, a realistic scenario, working code, validation, testing, expert tradeoffs, and documented limitations.
+- Include companion projects in `examples/<slug>/` with setup instructions, requirements, `.env.example` when applicable, tests, and VS Code launch configuration.
+- Verify claims and link research sources. Distinguish reported research results from measurements taken in the example.
+- Run relevant tests and commit articles and their companion code to Git. Never commit credentials.
 
-**Android limitation:** Medium's *Import a story* is web-only. Medium's Android app supports writing/editing but cannot reliably render pasted Markdown or HTML as rich formatted articles. Use a supported desktop browser for URL import.
+## Medium mobile limitation
 
-The import edition intentionally includes no CSS, JavaScript, tables, or `<pre>` blocks. All runnable source, dependencies, `.env.example`, VS Code configuration and tests stay in `examples/reasoning-cache/`. The rich version of the article is still available at `articles/reasoning-cache/index.html`.
+GitHub renders Markdown automatically, but **Medium's Android app does not reliably convert pasted Markdown into styled Medium headings and code blocks**. Markdown is now the preferred repository source format, not a guarantee of automatic mobile formatting in Medium. Use Medium's own formatting controls or a desktop Markdown-to-rich-text workflow and check the published draft.
 
-## Convention for future articles
+## Legacy HTML
 
-- Each article gets `articles/<slug>/index.html` (semantic, standalone HTML; `article`, `h1`–`h3`, `p`, `pre/code`).
-- Examples live in `examples/<slug>/`, with `README.md`, `requirements.txt`, `.env.example` when needed, tests, and CLI instructions.
-- All additions run through CI. No credentials in Git.
+Existing `articles/reasoning-cache/index.html` and `articles/reasoning-cache/medium/index.html` are retained for old links only. Do not generate additional HTML article editions unless explicitly requested.
 
-The source paper is [CPU-ARC: Agentic Reasoning Caching for on-CPU Reasoning Reuse](https://arxiv.org/abs/2611.09891). The implementation is a separate, limited educational demonstration.
+## Reference
+
+[CPU-ARC](https://arxiv.org/abs/2611.09891) inspired the reasoning-cache article. The accompanying code is an independent and narrowly scoped educational implementation.

@@ -4,6 +4,7 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 ## Articles
 
+- [Your AI Agent Understood the Request. Did It Send the Right Amount?](articles/multilingual-tool-guard/article.md) — [Multilingual tool-call guard Python example](examples/multilingual-tool-guard/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/multilingual-tool-guard/)
 - [Your AI Cited a Source. Did the Source Actually Say That?](articles/verifiable-legal-rag/article.md) — [Verifiable legal RAG Python example](examples/verifiable-legal-rag/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/verifiable-legal-rag/)
 - [Your AI Agent Didn't Learn. It Just Remembered.](articles/your-ai-agent-didnt-learn-it-just-remembered/article.md) — [Verified mistake-memory Python example](examples/verified-mistake-memory/README.md)
 - [Your Fastest AI Model Might Be Your Most Expensive Deployment](articles/edge-inference-economics/article.md) — [Edge inference economics Python example](examples/edge-inference-economics/README.md)

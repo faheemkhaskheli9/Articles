@@ -1,0 +1,28 @@
+name: Multilingual tool guard example
+on:
+  push:
+    paths:
+      - 'articles/multilingual-tool-guard/**'
+      - 'examples/multilingual-tool-guard/**'
+      - 'tools/build_medium_html.py'
+      - '.github/workflows/multilingual-tool-guard.yml'
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/multilingual-tool-guard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install -e .
+      - run: python -m pytest -q
+      - run: python -m tool_guard demo
+      - run: python -m tool_guard evaluate
+      - run: python -m tool_guard limitations
+      - run: python ../../tools/build_medium_html.py multilingual-tool-guard --check

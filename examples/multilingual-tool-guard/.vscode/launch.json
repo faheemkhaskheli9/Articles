@@ -1,0 +1,90 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Tool Guard: Demo (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tool_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "demo"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Tool Guard: Evaluate ablation",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tool_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "evaluate"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Tool Guard: Known limitations",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tool_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "limitations"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Tool Guard: Check one Urdu call",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tool_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "check",
+        "C-310 سے D-420 کو پانچ ہزار روپے بھیجیں۔",
+        "{\"name\": \"bank.transfer\", \"arguments\": {\"from_account\": \"C-310\", \"to_account\": \"D-420\", \"amount_pkr\": 500}}"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Tool Guard: Ask LLM (.env required)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tool_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "ask",
+        "C-310 se D-420 ko paanch hazar rupay bhejo."
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Tool Guard: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-q"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

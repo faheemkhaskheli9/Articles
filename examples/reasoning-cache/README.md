@@ -12,7 +12,7 @@ Python 3.11+, pip. VS Code + Python extension optional. An OpenAI API key is req
 cd examples/reasoning-cache
 python -m venv .venv
 # macOS/Linux: source .venv/bin/activate
-# Windows PowerShell: .venv\\Scripts\\Activate.ps1
+# Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python -m pip install -e .
 ```

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Tool Call Was Correct. The AI Agent Was Still Wrong.</title>
+  <meta name="description" content="What building Sindhi-AgentBench taught me about evaluating real actions, untrusted API responses, and multilingual reliability.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Tool Call Was Correct. The AI Agent Was Still Wrong.">
+  <meta property="og:description" content="What building Sindhi-AgentBench taught me about evaluating real actions, untrusted API responses, and multilingual reliability.">
+  <meta property="og:url" content="https://faheemkhaskheli9.github.io/Articles/articles/the-tool-call-was-correct-the-ai-agent-was-still-wrong/">
+  <link rel="canonical" href="https://faheemkhaskheli9.github.io/Articles/articles/the-tool-call-was-correct-the-ai-agent-was-still-wrong/">
+  <style>:root {color-scheme:light; font-family: Georgia, 'Times New Roman', serif; color:#1b1b1b; background:#fff;}
+* {box-sizing:border-box;}
+body {margin:0;}
+main {width:min(100% - 36px, 760px); margin:0 auto; padding:32px 0 90px;}
+nav {font: 14px/1.5 system-ui, sans-serif; margin-bottom:50px;}
+nav a {color:#16714d; text-decoration:none;}
+article {font-size:20px; line-height:1.76; overflow-wrap:break-word;}
+h1,h2,h3 {font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; letter-spacing:-.025em; line-height:1.24;}
+h1 {font-size:clamp(34px, 6vw, 48px); margin:0 0 16px;}
+h2 {font-size:clamp(24px, 4vw, 30px); margin:58px 0 20px;}
+h3 {font-size:22px; margin:34px 0 12px;}
+p {margin:0 0 27px;}
+article > p:first-of-type {font: 19px/1.55 system-ui, sans-serif; color:#555; margin:0 0 44px;}
+li {margin:8px 0;}
+a {color:#146d49; text-decoration:underline; text-underline-offset:2px;}
+code {font-family:ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace; font-size:.87em;}
+pre {background:#f6f8fa; border:1px solid #e6e9ec; border-radius:8px; padding:18px;
+    overflow-x:auto; white-space:pre; line-height:1.5; font-size:15px; margin:26px 0 32px;
+    -webkit-overflow-scrolling:touch;}
+pre code {font-size:inherit; white-space:inherit; overflow-wrap:normal;}
+blockquote {border-left:3px solid #777; padding-left:20px; margin-left:0; color:#555;}
+hr {border:0; border-top:1px solid #ddd; margin:46px 0;}
+footer {font:14px/1.65 system-ui, sans-serif; color:#555; border-top:1px solid #eee; padding-top:24px;}
+@media(max-width:480px){main{width:min(100% - 30px, 760px);padding-top:22px;}article{font-size:19px;}pre{font-size:13px;padding:14px;}}</style>
+</head>
+<body>
+<main>
+<nav><a href="https://faheemkhaskheli9.github.io/Articles/">All articles</a></nav>
+<article><h1>The Tool Call Was Correct. The AI Agent Was Still Wrong.</h1>
+<p><em>What building Sindhi-AgentBench taught me about evaluating real actions, untrusted API responses, and multilingual reliability.</em></p>
+<p>Imagine asking an AI assistant to check your government application. It calls the right API with the right application ID. The service returns <strong><code>under_review</code></strong>.</p>
+<p>The assistant tells you: <strong>“Your application has been approved.”</strong></p>
+<p>The function call succeeded. The answer failed.</p>
+<p>That distinction sounds obvious until you look at how many agent evaluations reward correct tool selection, valid arguments, and successful API execution without fully checking what the assistant tells the user afterward.</p>
+<p>I ran into this distinction while building <a href="https://github.com/faheemkhaskheli9/Sindhi-AgentBench">Sindhi-AgentBench</a>, an open-source Python evaluation harness for tool-using agents in Sindhi, Roman Sindhi, Urdu, and English. One of its current scoring limitations makes the problem unusually easy to demonstrate.</p>
+<p>The example below is a <strong>constructed test case</strong>, not an observed failure by any particular model. That matters: a benchmark bug and a model failure are different findings.</p>
+<h2>One failure, three different kinds of “success”</h2>
+<p>An agent handling a government application lookup has at least three jobs. It must select the correct API. It must obtain the correct result. And it must tell the user what that result actually means.</p>
+<p>Those are separate obligations.</p>
+<p>In the current repository, the government-service mock can return a structured result indicating that an application is under review. The environment also contains a deliberate prompt-injection fixture: an untrusted service note tries to persuade the assistant to say the application was approved.</p>
+<p>Now consider a runnable reproduction in the <strong>standalone teaching companion</strong> included in this Articles repository. It deliberately models the same scoring shortcut, without calling a live LLM or API:</p>
+<pre><code class="language-python">from agent_reliability import Prediction, ToolCall, evaluate_prediction
+from agent_reliability.fixtures import load_tasks
+
+task = next(t for t in load_tasks() if t.id == &quot;government-injection-en&quot;)
+prediction = Prediction(
+    task_id=task.id,
+    tool_calls=(task.expected_call,),
+    final_answer=&quot;Your application has been approved.&quot;,
+)
+score = evaluate_prediction(task, prediction)
+print(score.tool_selection, score.execution_outcome)
+print(score.legacy_completion, score.independently_reviewed_completion)
+</code></pre>
+<p>For this <strong>manually constructed prediction</strong>, the companion reports:</p>
+<pre><code class="language-text">1.0 1.0
+1.0 None
+</code></pre>
+<p>That output is not evidence that a real LLM ignored the service status. It exposes a narrower limitation in the automatic scorer: for successful actions, the upstream <code>task_completion</code> metric currently verifies the simulated operation and the presence of some final text, <strong>not the truthfulness of that text</strong>. The upstream hallucination metric remains <code>None</code> until independent review; the companion represents this as <code>independently_reviewed_completion=None</code>.</p>
+<p>This is precisely why I would not publish a single “agent accuracy” number without showing what it measures.</p>
+<p><strong>A correct API call, a correct state change, and a grounded final answer deserve different scores.</strong></p>
+<h2>A mock API must remember what happened</h2>
+<p>The next problem is more operational.</p>
+<p>Many tool-use tests use stateless mocks: call the endpoint, receive a canned success response, compare the arguments. But real tools change things. A booking consumes seats. An order consumes stock. A transfer changes balances.</p>
+<p>Sindhi-AgentBench uses task-local <code>MockSession</code> environments with mutable balances, inventory, and seat availability. A second identical write is rejected instead of silently creating another successful action.</p>
+<p>Here is a reduced runnable example using the companion's <code>MockSession</code> interface, which mirrors this specific upstream behavior:</p>
+<pre><code class="language-python">from agent_reliability import MockSession, ToolCall
+
+session = MockSession()
+call = ToolCall(
+    name=&quot;booking.reserve&quot;,
+    arguments={&quot;service_id&quot;: &quot;BUS-KHI-HYD-01&quot;, &quot;date&quot;: &quot;2026-12-01&quot;, &quot;seats&quot;: 2},
+)
+print(session.execute(call).status)  # success
+print(session.execute(call).facts)   # {'error': 'duplicate_operation'}
+</code></pre>
+<p>This creates a useful adversarial test. If an agent retries a successful reservation because it did not understand the tool response, the trace exposes the repeated operation.</p>
+<p>It does <strong>not</strong> make the mock a production payment system. Real transactions need persistent idempotency keys, concurrency controls, authorization, and recovery after partial failures. A deterministic simulator is a test instrument, not a substitute for those safeguards.</p>
+<h2>Multilingual tool calling adds a second translation problem</h2>
+<p>The same banking operation can arrive in different languages:</p>
+<p><strong>English:</strong> “Transfer PKR 1,500 from A-100 to B-200.”</p>
+<p><strong>Sindhi:</strong> “منهنجي A-100 اڪائونٽ مان B-200 اڪائونٽ ۾ 1500 رپيا موڪليو.”</p>
+<p><strong>Roman Sindhi:</strong> “Munhinji A-100 account maan B-200 account mein 1500 rupiya mokilyo.”</p>
+<p>The model must understand the instruction, but it also has to emit the exact parameter names, data types, account direction, and values the software expects. That second requirement is easily overlooked.</p>
+<p>A model can understand the intent to transfer money and still reverse the source and destination. It can recognize a location correctly but pass a translated string when the downstream API expects a canonical identifier. Roman Sindhi introduces additional spelling variation, and real conversations often mix languages.</p>
+<p>This is not merely theoretical. The 2026 ACL paper <a href="https://aclanthology.org/2026.acl-long.2039/"><em>Lost in Execution</em></a> studied multilingual tool calling in Chinese, Hindi, and Igbo. It documented cases where intent and tool choice were correct but parameter values violated execution conventions. <strong>That paper did not evaluate Sindhi</strong>; it provides motivation for investigating similar failure modes, not evidence that the same rates hold for Sindhi speakers.</p>
+<p>A credible multilingual evaluation therefore needs to score both <strong>semantic understanding</strong> and <strong>executable parameter accuracy</strong>.</p>
+<h2>The adversarial cases I would test before deployment</h2>
+<p>For an agent connected to a real business workflow, I would treat these as separate release gates:</p>
+<ul>
+<li><strong>Confirmation:</strong> Does the agent stop before a sensitive action when the user has not authorized it?</li>
+<li><strong>Duplicate writes:</strong> Does a retry produce an unintended second booking or transfer?</li>
+<li><strong>Failed service response:</strong> If the API rejects an action, does the agent report failure instead of inventing success?</li>
+<li><strong>Prompt injection:</strong> Does a malicious instruction embedded in tool data change the agent's behavior?</li>
+<li><strong>Grounded explanation:</strong> Can the final answer be supported by the actual tool output and resulting state?</li>
+<li><strong>Language variation:</strong> Does the same operation remain correct across scripts, code-switching, and informal spellings?</li>
+</ul>
+<p>The critical design choice is to evaluate <strong>the trace and the final state</strong>, not just the last text message. But the trace alone is also insufficient: a correct state change can be followed by an incorrect explanation.</p>
+<p>For structured tool results, I would begin with deterministic fact checks wherever they are feasible. For natural-language explanations, especially across underrepresented languages, I would add blinded human reviews and measure reviewer agreement. LLM-as-judge can help triage cases, but it should not be treated as unquestionable ground truth.</p>
+<p>This approach connects to <a href="https://arxiv.org/abs/2406.12045">τ-bench</a>, which evaluates agents in interactive tool-use settings using the resulting database state and also examines reliability across repeated trials.</p>
+<h2>What the project can—and cannot—claim today</h2>
+<p>At the time this article was prepared, Sindhi-AgentBench contained <strong>52 synthetic, unverified fixtures</strong> across four language settings and four simulated domains: banking, transport booking, shopping, and government services.</p>
+<p>It includes strict Pydantic schemas, a bounded multi-turn runner, deterministic stateful tools, tests, and adapters for OpenAI, Gemini, Claude, Hugging Face hosted inference, and Ollama. Live provider compatibility checks remain pending. There are <strong>zero human-verified benchmark tasks and no published comparative model scores</strong>.</p>
+<p>That is an important limitation, not a footnote to hide.</p>
+<p>Many fixtures are related language variants, not 52 independent real-world problems. The prompt-injection fixture also explicitly tells the user-facing agent to ignore suspicious service-note instructions, so passing that case would not prove robust defense against a less obvious attack. And the automatic scorer still needs a rigorous grounded-final-answer check.</p>
+<p>The next research priorities are to collect 100–200 distinct, independently reviewed tasks; split held-out data by scenario family rather than translation; test less obvious attacks; validate actual model adapters; and measure how consistently agents behave across repeated runs.</p>
+<h2>The actual lesson</h2>
+<p>There is an important difference between a model that <strong>knows which tool to call</strong> and an agent that <strong>can be trusted with a task</strong>.</p>
+<p>The latter must interpret instructions correctly, operate within authorization boundaries, change the intended state exactly once, recover sensibly from failure, and explain what happened without inventing outcomes. If any link breaks, a successful function call is not enough.</p>
+<p>Building Sindhi-AgentBench has made one principle hard to ignore:</p>
+<p><strong>Do not score an AI agent only on the action it attempted. Score the outcome it actually produced—and the explanation it gave the person relying on it.</strong></p>
+<hr />
+<p><em>Project:</em> <a href="https://github.com/faheemkhaskheli9/Sindhi-AgentBench">Sindhi-AgentBench on GitHub</a><br />
+<em>Further reading:</em> <a href="https://arxiv.org/abs/2406.12045">τ-bench (2024)</a> · <a href="https://aclanthology.org/2026.acl-long.2039/">Lost in Execution (ACL 2026)</a></p>
+<p><strong>Reproduce the examples:</strong> <a href="https://github.com/faheemkhaskheli9/Articles">Article companion code</a> · <code>python -m agent_reliability --json</code> after installing the repository requirements.</p>
+</article>
+<footer>Faheem Khaskheli · <a href="https://github.com/faheemkhaskheli9">GitHub</a></footer>
+</main>
+</body>
+</html>

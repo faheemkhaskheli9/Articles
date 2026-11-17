@@ -4,6 +4,7 @@ Medium-importable technical articles with their complete runnable companion impl
 
 ## Articles
 
+- [The Tool Call Was Correct. The AI Agent Was Still Wrong](articles/the-tool-call-was-correct-the-ai-agent-was-still-wrong/index.html) — [Runnable AI-agent evaluation companion](examples/agent-reliability/README.md)
 - [Stop Making Your LLM Solve the Same Problem Twice](articles/reasoning-cache/index.html) — [Runnable Python example](examples/reasoning-cache/README.md)
 
 ## Publish the HTML to Medium

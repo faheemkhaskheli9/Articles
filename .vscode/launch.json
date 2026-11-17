@@ -50,6 +50,48 @@
         "tests"
       ],
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Agent Reliability: Offline demonstration",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "agent_reliability",
+      "cwd": "${workspaceFolder}/examples/agent-reliability",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/agent-reliability/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Agent Reliability: JSON trace",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "agent_reliability",
+      "args": [
+        "--json"
+      ],
+      "cwd": "${workspaceFolder}/examples/agent-reliability",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/agent-reliability/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Agent Reliability: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-q",
+        "tests"
+      ],
+      "cwd": "${workspaceFolder}/examples/agent-reliability",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/examples/agent-reliability/src"
+      },
+      "console": "integratedTerminal"
     }
   ]
 }

@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Reasoning Cache: Offline (seed and run)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "reasoning_cache",
+      "cwd": "${workspaceFolder}/examples/reasoning-cache",
+      "envFile": "${workspaceFolder}/examples/reasoning-cache/.env",
+      "env": {"PYTHONPATH": "${workspaceFolder}/examples/reasoning-cache/src"},
+      "args": ["--seed", "--request", "Calculate checkout total: subtotal $120, discount 10%, tax 8%, shipping $5."],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Reasoning Cache: LLM builder (API key required)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "reasoning_cache",
+      "cwd": "${workspaceFolder}/examples/reasoning-cache",
+      "envFile": "${workspaceFolder}/examples/reasoning-cache/.env",
+      "env": {"PYTHONPATH": "${workspaceFolder}/examples/reasoning-cache/src"},
+      "args": ["--build", "--request", "Compute total: shipping $0, tax 8%, discount 15%, subtotal $200."],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Reasoning Cache: Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}/examples/reasoning-cache",
+      "env": {"PYTHONPATH": "${workspaceFolder}/examples/reasoning-cache/src"},
+      "args": ["-q", "tests"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Edge economics — default",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/edge-inference-economics/cost_demo.py",
+      "args": [
+        "--config",
+        "${workspaceFolder}/examples/edge-inference-economics/scenario.json"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Edge economics — utilization sweep",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/edge-inference-economics/cost_demo.py",
+      "args": [
+        "--config",
+        "${workspaceFolder}/examples/edge-inference-economics/scenario.json",
+        "--sweep"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "measurement_status": "illustrative",
+  "description": "Fictional numbers for learning unit economics; not device measurements or cloud pricing",
+  "assumptions": {
+    "items_per_second": 8,
+    "device_price": 300,
+    "lifespan_years": 3,
+    "maintenance_per_year": 25,
+    "idle_watts": 8,
+    "load_watts": 35,
+    "electricity_price_per_kwh": 0.2,
+    "utilization": 0.05,
+    "useful_fraction_edge": 0.95,
+    "cloud_price_per_million_calls": 2,
+    "useful_fraction_cloud": 0.95,
+    "currency": "USD"
+  }
+}

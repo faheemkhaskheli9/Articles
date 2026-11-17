@@ -1,7 +1,7 @@
 """Offline, independently verified correction memory: educational example.
 
 No model weights are updated. The offline model and task oracle are synthetic.
-Do not use this file as a secure multi-tenant service.
+This is NOT an authenticated memory store or a safe general-purpose instruction system.
 """
 from __future__ import annotations
 
@@ -15,6 +15,15 @@ from typing import Callable
 
 WORD_PAIR = re.compile(r"^Last word:\s*([a-z]+)\s+([a-z]+)\s*$", re.I)
 TOKENS = re.compile(r"[a-z]+", re.I)
+MAX_CAPACITY = 10000
+MAX_TEXT = 2000
+SOURCES = frozenset({"test", "human", "tool"})
+
+
+def _nonempty(value: object, field: str) -> str:
+    if not isinstance(value, str) or not value.strip() or len(value) > MAX_TEXT:
+        raise ValueError(f"{field} must contain 1-{MAX_TEXT} characters")
+    return value
 
 
 @dataclass(frozen=True)
@@ -23,6 +32,12 @@ class Verdict:
     corrected_answer: str | None = None
     guidance: str | None = None
     source: str = "test"
+
+
+def _checked_verdict(value: object) -> Verdict:
+    if not isinstance(value, Verdict) or type(value.passed) is not bool:
+        raise TypeError("verifier must return Verdict with a boolean passed")
+    return value
 
 
 @dataclass(frozen=True)
@@ -37,22 +52,23 @@ class Lesson:
 
 class VerifiedMemory:
     def __init__(self, capacity: int = 100) -> None:
-        if capacity < 1:
-            raise ValueError("capacity must be positive")
+        if type(capacity) is not int or not 1 <= capacity <= MAX_CAPACITY:
+            raise ValueError("capacity must be an integer between 1 and 10000")
         self.capacity = capacity
         self.lessons: list[Lesson] = []
 
     def record(self, lesson: Lesson, verifier: Callable[[str, str], Verdict]) -> bool:
-        """Only persist a correction that passes a separate trusted check."""
-        if lesson.source not in {"test", "human", "tool"}:
+        """Re-check an answer before storage; trusted verifier is caller-owned."""
+        if not isinstance(lesson, Lesson):
+            raise TypeError("expected a Lesson")
+        if lesson.source not in SOURCES:
             raise ValueError("unsupported verifier provenance")
-        if not all((lesson.scope, lesson.question, lesson.wrong_answer,
-                    lesson.corrected_answer, lesson.guidance)):
-            raise ValueError("empty correction field")
+        for field in ("scope", "question", "wrong_answer", "corrected_answer", "guidance"):
+            _nonempty(getattr(lesson, field), field)
         if lesson.wrong_answer == lesson.corrected_answer:
             raise ValueError("correction did not change answer")
-        checked = verifier(lesson.question, lesson.corrected_answer)
-        if not isinstance(checked, Verdict) or not checked.passed:
+        checked = _checked_verdict(verifier(lesson.question, lesson.corrected_answer))
+        if not checked.passed:
             return False
         for existing in self.lessons:
             if (existing.scope, existing.question.casefold()) == (lesson.scope, lesson.question.casefold()):
@@ -64,6 +80,10 @@ class VerifiedMemory:
         return True
 
     def retrieve(self, question: str, scope: str, threshold: float = 0.3) -> list[Lesson]:
+        _nonempty(question, "question")
+        _nonempty(scope, "scope")
+        if not isinstance(threshold, (int, float)) or not 0 <= threshold <= 1:
+            raise ValueError("threshold must be between 0 and 1")
         terms = set(TOKENS.findall(question.casefold()))
         matches: list[tuple[float, Lesson]] = []
         for lesson in self.lessons:
@@ -77,7 +97,7 @@ class VerifiedMemory:
         return [lesson for _, lesson in matches[:3]]
 
     def save(self, path: str | Path) -> None:
-        """Atomic local JSON save, not encrypted or authenticated."""
+        """Atomic local JSON save; neither encrypted nor tamper-authenticated."""
         target = Path(path)
         target.parent.mkdir(parents=True, exist_ok=True)
         tmp_path: Path | None = None
@@ -94,14 +114,24 @@ class VerifiedMemory:
                 tmp_path.unlink()
 
     @classmethod
-    def load(cls, path: str | Path) -> VerifiedMemory:
+    def load(cls, path: str | Path, verifier: Callable[[str, str], Verdict]) -> VerifiedMemory:
+        """Fail closed when any persisted correction fails independent re-validation.
+
+        A valid correction does not authenticate who wrote the file or the
+        guidance text. Do not load a file from an untrusted source.
+        """
         data = json.loads(Path(path).read_text(encoding="utf-8"))
-        if data.get("schema") != 1 or not isinstance(data.get("lessons"), list):
+        if not isinstance(data, dict) or data.get("schema") != 1 or not isinstance(data.get("lessons"), list):
             raise ValueError("unsupported memory format")
         result = cls(capacity=data["capacity"])
-        result.lessons = [Lesson(**item) for item in data["lessons"]]
-        if len(result.lessons) > result.capacity:
+        if len(data["lessons"]) > result.capacity:
             raise ValueError("memory exceeds capacity")
+        for raw in data["lessons"]:
+            if not isinstance(raw, dict):
+                raise ValueError("lesson must be a JSON object")
+            lesson = Lesson(**raw)
+            if not result.record(lesson, verifier):
+                raise ValueError("persisted lesson failed verification or was duplicated")
         return result
 
 
@@ -117,7 +147,7 @@ def oracle(question: str, answer: str) -> Verdict:
 
 
 def toy_model(question: str, lessons: list[Lesson]) -> str:
-    """Deliberately flawed stand-in, not an LLM."""
+    """Deliberately flawed stand-in, not an LLM. Follows ANY retrieved lesson."""
     match = WORD_PAIR.fullmatch(question)
     if match is None:
         return "unsupported task"
@@ -129,7 +159,7 @@ def solve(question: str, model: Callable[[str, list[Lesson]], str],
           scope: str, *, use_memory: bool = True) -> dict[str, object]:
     lessons = memory.retrieve(question, scope) if use_memory else []
     first = model(question, lessons)
-    initial = verifier(question, first)
+    initial = _checked_verdict(verifier(question, first))
     if initial.passed or not use_memory or not initial.corrected_answer or not initial.guidance:
         return {"answer": first, "passed": initial.passed, "attempts": 1, "learned": False}
     lesson = Lesson(scope, question, first, initial.corrected_answer,
@@ -138,18 +168,23 @@ def solve(question: str, model: Callable[[str, list[Lesson]], str],
     if not learned:
         return {"answer": first, "passed": False, "attempts": 1, "learned": False}
     retry = model(question, memory.retrieve(question, scope))
-    return {"answer": retry, "passed": verifier(question, retry).passed,
-            "attempts": 2, "learned": True}
+    passed = _checked_verdict(verifier(question, retry)).passed
+    return {"answer": retry, "passed": passed, "attempts": 2, "learned": True}
 
 
 def evaluate(cases: list[tuple[str, str]], model: Callable[[str, list[Lesson]], str],
-             memory: VerifiedMemory, scope: str, use_memory: bool) -> dict[str, int]:
-    """Simple frozen-task comparison, not an ML accuracy study."""
+             memory: VerifiedMemory, scope: str, use_memory: bool,
+             *, verifier: Callable[[str, str], Verdict]) -> dict[str, int]:
+    """Validate gold labels and score with independent verifier; not an ML study."""
     training = {(l.scope, l.question.casefold()) for l in memory.lessons}
     if any((scope, question.casefold()) in training for question, _ in cases):
         raise ValueError("evaluation leakage: training prompt in held-out set")
-    correct = sum(model(q, memory.retrieve(q, scope) if use_memory else []).strip() == expected
-                  for q, expected in cases)
+    correct = 0
+    for question, expected in cases:
+        if not _checked_verdict(verifier(question, expected)).passed:
+            raise ValueError("held-out label is not independently verified")
+        answer = model(question, memory.retrieve(question, scope) if use_memory else [])
+        correct += int(_checked_verdict(verifier(question, answer)).passed)
     return {"correct": correct, "total": len(cases)}
 
 
@@ -158,9 +193,9 @@ def main() -> None:
     training = "Last word: green purple"
     heldout = [("Last word: cyan orange", "orange"),
                ("Last word: gold silver", "silver")]
-    before = evaluate(heldout, toy_model, memory, "demo", False)
+    before = evaluate(heldout, toy_model, memory, "demo", False, verifier=oracle)
     feedback = solve(training, toy_model, oracle, memory, "demo")
-    after = evaluate(heldout, toy_model, memory, "demo", True)
+    after = evaluate(heldout, toy_model, memory, "demo", True, verifier=oracle)
     print(json.dumps({"demo": "synthetic deterministic; NOT a live-LLM benchmark",
                       "feedback": feedback, "memory_off": before, "memory_on": after}, indent=2))
 

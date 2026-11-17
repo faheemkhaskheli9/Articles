@@ -1,0 +1,89 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "SQL Guard: Demo (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sql_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "demo"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "SQL Guard: Evaluate vs keyword filter",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sql_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "evaluate"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "SQL Guard: Known limitations",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sql_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "limitations"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "SQL Guard: Check one query",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sql_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "check",
+        "SELECT name, email FROM customers WHERE city = 'Karachi'"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "SQL Guard: Ask LLM (.env required)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sql_guard",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "ask",
+        "Which city had the most paid revenue?"
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "SQL Guard: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-q"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

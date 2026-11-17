@@ -1,0 +1,28 @@
+name: Text-to-SQL guard example
+on:
+  push:
+    paths:
+      - 'articles/text-to-sql-guard/**'
+      - 'examples/text-to-sql-guard/**'
+      - 'tools/build_medium_html.py'
+      - '.github/workflows/text-to-sql-guard.yml'
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/text-to-sql-guard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install -e .
+      - run: python -m pytest -q
+      - run: python -m sql_guard demo
+      - run: python -m sql_guard evaluate
+      - run: python -m sql_guard limitations
+      - run: python ../../tools/build_medium_html.py text-to-sql-guard --check

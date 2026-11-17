@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stop Making Your LLM Solve the Same Problem Twice: A Practical Reasoning Cache in Python</title>
+<meta name="description" content="A step-by-step introduction to reusable AI reasoning, strict task routing, validated Python procedures, testing, fallback, and production tradeoffs.">
+<meta name="author" content="Faheem Khaskheli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stop Making Your LLM Solve the Same Problem Twice">
+<link rel="canonical" href="https://faheemkhaskheli9.github.io/Articles/articles/reasoning-cache/">
+</head>
+<body>
+<article>
+<h1>Stop Making Your LLM Solve the Same Problem Twice</h1>
+<p><em>Build a validated reasoning cache in Python, understand when it saves money, and learn why safe reuse is harder than storing answers.</em></p>
+<p>Most AI agents treat each new request as another problem for a large language model. But a business agent might calculate a discount today, then calculate the same kind of discount tomorrow with different numbers. A response cache cannot reuse the old answer; it might be able to reuse the procedure that produced it.</p>
+<p>Recent research into this idea includes <a href="https://arxiv.org/abs/2611.09891">CPU-ARC: Agentic Reasoning Caching for on-CPU Reasoning Reuse</a>, published in November 2026. The authors report 16–291 times lower cost per cached invocation on the tasks they evaluated. That does not include the full cost of constructing each cache entry or prove similar savings in an enterprise application.</p>
+<p><strong>This article teaches an independently developed engineering demonstration, not the paper's full implementation.</strong> The <a href="https://github.com/faheemkhaskheli9/Articles/tree/main/examples/reasoning-cache">companion repository contains the complete Python project</a>, including tests, dependencies, an optional model-assisted builder, and VS Code debugging configurations.</p>
+
+<h2>1. A realistic starting point: checkout support</h2>
+<p>Imagine a customer-support agent processing this request:</p>
+<blockquote><p>Calculate checkout total: subtotal $120, discount 10%, tax 8%, shipping $5.</p></blockquote>
+<p>Our example has four precise rules. Apply the discount first. Calculate tax on the discounted subtotal. Do not tax shipping. Round monetary steps to two decimals using the ROUND_HALF_UP policy.</p>
+<p>The discount is $12. The taxable subtotal is $108. The tax is $8.64. Add $5 shipping, and the final total is <strong>$121.64</strong>.</p>
+<p>Now a second customer asks:</p>
+<blockquote><p>Compute total: shipping $0, tax 8%, discount 15%, subtotal $200.</p></blockquote>
+<p>The correct result is <strong>$183.60</strong>. The values and word order changed, but the rules did not.</p>
+<p><strong>Expert caveat:</strong> If you already know these rules, the correct first move is to write an ordinary Python function. An LLM is not needed for straightforward arithmetic. Reasoning caches become more interesting when an agent encounters many recurring task families that were not anticipated when the software was written.</p>
+
+<h2>2. Cache the procedure, not the previous answer</h2>
+<p>Our cache entry does not store “$121.64” as a reusable response. It represents four parameterized operations:</p>
+<ol>
+<li><strong>Discount amount:</strong> subtotal multiplied by discount percentage, divided by 100.</li>
+<li><strong>Taxable subtotal:</strong> subtotal minus discount amount.</li>
+<li><strong>Tax amount:</strong> taxable subtotal multiplied by tax percentage, divided by 100.</li>
+<li><strong>Total:</strong> taxable subtotal plus tax amount plus shipping.</li>
+</ol>
+<p>These steps are stored as a restricted arithmetic program. The evaluator interprets only approved mathematical syntax and named variables, using Python Decimal arithmetic. It does not execute arbitrary generated Python with eval or exec.</p>
+<p>You can inspect the actual implementation in the <a href="https://github.com/faheemkhaskheli9/Articles/tree/main/examples/reasoning-cache">complete Python example</a>. This distinction matters: source code stays in GitHub, where it remains readable, testable, and copyable. Medium's importer can flatten multi-line HTML code blocks, so this import edition deliberately uses prose and lists instead of those fragile blocks.</p>
+
+<h2>3. Route requests conservatively</h2>
+<p>Before executing a stored procedure, the agent must decide whether the procedure applies. Similarity is not enough.</p>
+<p>“Apply 10% discount, then tax the discounted amount” and “include shipping in the taxable base” can sound almost identical, yet require different calculations. A semantic retriever may identify candidates, but a second check must enforce the actual business contract.</p>
+<p>Our demo extracts the subtotal, discount percentage, tax percentage, and shipping charge from deliberately structured requests. It rejects missing values, duplicates, unsupported policy changes, and invalid ranges. For a task outside the contract, it returns a verified fallback instead of forcing a false cache hit.</p>
+<p><strong>What experienced engineers optimize:</strong> false cache hits matter more than false cache misses. A miss costs another model call. A wrong hit can silently produce a bad invoice.</p>
+
+<h2>4. Run the full implementation</h2>
+<p>The project supports Python 3.11 or newer and works offline for the curated cache demonstration.</p>
+<ol>
+<li>Clone the <a href="https://github.com/faheemkhaskheli9/Articles">Articles repository</a> using the command <strong>git clone https://github.com/faheemkhaskheli9/Articles.git</strong>.</li>
+<li>Open the <strong>examples/reasoning-cache</strong> folder.</li>
+<li>Create a Python virtual environment using <strong>python -m venv .venv</strong>, then activate it with the command appropriate to your operating system.</li>
+<li>Install dependencies using <strong>python -m pip install -r requirements.txt</strong> and <strong>python -m pip install -e .</strong>.</li>
+<li>Seed the validated procedure using <strong>python -m reasoning_cache --seed</strong>.</li>
+<li>Run the tests using <strong>python -m pytest -q</strong>.</li>
+</ol>
+<p>To try another input, run the CLI with the <strong>--request</strong> option followed by the customer message. The response contains a route, procedure identifier, and calculated values.</p>
+<p>For the second customer, the expected total is <strong>183.60</strong>. If the cache is absent or the policy is unsupported, the demo uses an independent reference calculation rather than pretending there was a cache hit.</p>
+<p>The <a href="https://github.com/faheemkhaskheli9/Articles/blob/main/examples/reasoning-cache/README.md">example README</a> includes exact commands for Windows, macOS, and Linux, plus VS Code launch settings. You do not need an API key for the offline scenario.</p>
+
+<h2>5. Let a model propose a procedure—and verify it</h2>
+<p>Constructing a procedure from a previous solution is the more interesting part of reasoning caching. Our optional builder asks a source model to solve an example, then asks a builder model to propose a constrained JSON arithmetic program. The proposed program is checked before it is allowed into the registry.</p>
+<p>To try this, copy <strong>.env.example</strong> to <strong>.env</strong>, set your OPENAI_API_KEY, and run <strong>python -m reasoning_cache --build</strong>. This makes paid API calls and can reject an incorrect generated proposal.</p>
+<p><strong>A model-generated function is a candidate, not a trusted capability.</strong> The demo validates allowed operations, numeric boundaries, and reference examples. Its arithmetic-only language is deliberately narrow; it does not make arbitrary generated code safe to execute.</p>
+<p>There is also a deeper limitation. Our checkout project already has an independently written reference implementation. A general agent encountering a novel task may not have an oracle. Finding credible tests for newly discovered capabilities is among the hardest open engineering problems in procedural memory.</p>
+
+<h2>6. Test the failure cases that matter</h2>
+<p>Test the happy path, but spend at least as much effort on when the cache should refuse a request. Useful test families include:</p>
+<ul>
+<li><strong>Contract mismatches:</strong> shipping becomes taxable or rounding rules change.</li>
+<li><strong>Invalid inputs:</strong> discount exceeds 100%, values are missing, or fields contradict each other.</li>
+<li><strong>Unsafe proposals:</strong> generated expressions try to access attributes, call functions, import modules, or consume excessive resources.</li>
+<li><strong>Cache corruption:</strong> the registry contains malformed or outdated entries.</li>
+<li><strong>Independent correctness:</strong> randomized inputs and mathematical invariants are compared with trusted calculations.</li>
+</ul>
+<p>Passing a small test suite is useful but not sufficient for production. High-impact procedures require more extensive fuzzing, isolation, versioning, human approval, and observability. In particular, comparing a generated procedure only with the original model's answer can preserve the model's original mistake.</p>
+
+<h2>7. Decide whether caching is worth the complexity</h2>
+<p>Procedure construction consumes tokens and time. Routing consumes resources on every request. Some requests miss the cache. A reusable procedure pays for itself only when repeated, validated execution saves more than those overheads.</p>
+<p>A simple break-even estimate is: <strong>required request count is greater than build cost divided by the net expected saving per request</strong>. The expected saving depends on valid-hit rate, original-model cost, cached-execution cost, and routing overhead.</p>
+<p>Do not report only the cache-hit rate. Measure verified hit rate, incorrect-match rate, end-to-end latency, amortized builder cost, invalidations, fallback frequency, and data drift.</p>
+<p>For predictable workflows, conventional code is usually simpler. For highly novel tasks, safe procedure reuse may be impossible. Between these extremes is the opportunity: repeated problem families that agents can translate into validated, reusable software.</p>
+<p><strong>The aim is not to eliminate reasoning. It is to stop paying for reasoning when a verified procedure already solves the task.</strong></p>
+
+<h2>Research and complete implementation</h2>
+<p><strong>Research paper:</strong> <a href="https://arxiv.org/abs/2611.09891">CPU-ARC: Agentic Reasoning Caching for on-CPU Reasoning Reuse</a> by Peter Belcak, Greg Heinrich, Saurav Muralidharan, Shizhe Diao, and Pavlo Molchanov (November 6, 2026).</p>
+<p><strong>Runnable project:</strong> <a href="https://github.com/faheemkhaskheli9/Articles/tree/main/examples/reasoning-cache">Python source, requirements, environment example, pytest tests, and VS Code launch profiles</a>.</p>
+<p><strong>Technical scope:</strong> This tutorial demonstrates a constrained procedure-reuse architecture. It is not an implementation of the complete CPU-ARC system, and the paper's reported cost ratios were not measured using this example.</p>
+</article>
+</body>
+</html>

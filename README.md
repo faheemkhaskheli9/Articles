@@ -9,15 +9,17 @@ Medium-importable technical articles with their complete runnable companion impl
 
 ## Publish the HTML to Medium
 
-**Important:** Medium's *Import a story* accepts a **public URL**, not a downloaded `.html` file, GitHub source URL, or raw Markdown. It is **web-only**, not in the Medium Android app.
+**Use the special import edition for Medium, not the full HTML tutorial.** Medium uses a third-party importer that may discard CSS and collapse multi-line <pre> code blocks. No HTML source can guarantee 1:1 reproduction in Medium. The full technical page remains intact for readers and links to the complete code.
 
-1. On GitHub, open **Settings → Pages → Build and deployment**.
-2. Choose **Deploy from a branch**, `main`, `/(root)`, then save. (Repository owner must enable Pages; initial publication can take time.)
-3. Open the public article URL: `https://faheemkhaskheli9.github.io/Articles/articles/reasoning-cache/`.
-4. On **Medium's web interface**, open **Stories → Import a story** and enter that URL.
-5. Review headings, code blocks, image embeds and links in the imported draft. Correct anything Medium's import converter changed; publish when ready.
+1. In GitHub **Settings → Pages → Build and deployment**, enable **Deploy from a branch**: `main` / `/(root)` (if not already enabled).
+2. Verify the Medium-specific public URL opens in a normal browser: `https://faheemkhaskheli9.github.io/Articles/articles/reasoning-cache/medium/`.
+3. In **Medium's desktop web interface**, choose **Stories → Import a story** and paste this **Medium-specific URL** (not the raw GitHub source and not a local HTML file).
+4. Review the imported draft. Headings, paragraphs, emphasis, lists, and links are deliberately simple; Medium still controls its rendering. Insert native **{ }** code blocks manually if you need full Python snippets within the Medium story.
+5. Medium automatically associates an imported story with the original URL via canonical metadata. Decide which site should be canonical before publishing.
 
-Medium sets an automatic canonical link pointing to the original GitHub Pages article after import. For SEO, decide whether GitHub Pages or Medium should be your primary destination before publishing. The conversion is not guaranteed to retain every code block or diagram.
+**Android limitation:** Medium's *Import a story* is web-only. Medium's Android app supports writing/editing but cannot reliably render pasted Markdown or HTML as rich formatted articles. Use a supported desktop browser for URL import.
+
+The import edition intentionally includes no CSS, JavaScript, tables, or `<pre>` blocks. All runnable source, dependencies, `.env.example`, VS Code configuration and tests stay in `examples/reasoning-cache/`. The rich version of the article is still available at `articles/reasoning-cache/index.html`.
 
 ## Convention for future articles
 

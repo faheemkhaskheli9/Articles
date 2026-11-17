@@ -1,14 +1,14 @@
-# My AI Controller Earned More Reward. It Reached Fewer Targets.
+# My AI Controller Earned More Reward. Did It Actually Get Better?
 
-*An experiment from my Brain project taught me why a successful AI benchmark can still fail the task that matters. Here is how to reproduce the mistake with Python—and how to evaluate it properly.*
+*A preregistered experiment in my Brain project improved a reward metric but did not establish better goal completion. Here is what the data supports, what it does not, and a runnable Python stress test.*
 
 By Faheem Khaskheli · November 17, 2026 · AI Research / Reinforcement Learning / Evaluation
 
 Imagine an AI-controlled robot arm trying to touch a target before a deadline. Every time its hand moves closer, the system earns a point. The score improves. The controller gets better at moving in the right direction.
 
-But it still misses the target.
+But the robot still fails to reach most of its targets. A higher reward score does not automatically mean higher task success.
 
-That is not a hypothetical problem I added to make the introduction interesting. In an experiment in my open-source [Brain project](https://github.com/faheemkhaskheli9/Brain), a controller earned a substantially better *progress reward* while failing to show an improvement in *target contact*. The raw result was uncomfortable enough to change how I think about evaluating AI agents.
+That distinction emerged in a reproducible toy experiment from my open-source [Brain project](https://github.com/faheemkhaskheli9/Brain): a controller achieved a higher *progress reward*, but the evaluation did **not** establish an improvement in *target contact*. The observed contact percentage was lower, yet the uncertainty interval included zero. The result motivates a narrower, more useful conclusion than claiming the controller became worse.
 
 The lesson is simple: **a reward function measures the behavior you specified, not necessarily the outcome you wanted.**
 
@@ -31,7 +31,7 @@ The reward improvement passed the preregistered primary test. The apparent decli
 
 There is another important boundary: the system did not discover and train new skills during evaluation. Both sparse policies had been trained beforehand, and their weights stayed frozen. The online component selected between saved behaviors. That is *adaptation through policy selection*, not evidence of general intelligence or autonomous skill formation.
 
-The surprising number was not the reward gain. It was the failure of that gain to transfer cleanly to the user-visible objective.
+The finding is about evidence, not a demonstrated decline in task ability: the reward improved under this protocol, while superiority on the user-visible goal was unproven.
 
 ## Why moving closer is not the same as arriving
 
@@ -58,7 +58,7 @@ The environment is deliberately simple. An agent starts at position 0 and must r
 1. **Cautious:** moves +0.04 on normal steps or +0.02 on slips. It never takes a backward step, so its progress reward looks excellent. But even 16 perfect steps cover only 0.64 of the required distance.
 2. **Bold:** moves +0.14 on normal steps or −0.06 on slips. It can lose progress and reward, but it also has a chance of finishing within the deadline.
 
-The evaluator keeps three outputs separate: mean progress reward, fraction of episodes in which the goal was actually reached, and remaining distance at the deadline. Once a policy reaches the goal, the remaining action slots receive zero progress reward; both policies use the same 16-slot evaluation horizon.
+The evaluator keeps three outputs separate: mean progress reward, fraction of episodes in which the goal was actually reached, and remaining distance at the deadline. Once a policy reaches the goal, the remaining action slots receive zero progress reward; both policies use the same 16-slot evaluation horizon. **That scoring choice matters:** a policy that finishes early loses opportunities to collect further +1 progress rewards. The contrast is partly *constructed by the score definition* as well as the different step sizes. This is a demonstration of metric sensitivity—not a reproduction of the Brain controller's reward calculation.
 
 You can inspect the complete implementation in [`reward_gap.py`](https://github.com/faheemkhaskheli9/Articles/blob/main/examples/reward-is-not-success/reward_gap.py), plus its tests and VS Code launch configuration.
 
@@ -69,6 +69,7 @@ git clone https://github.com/faheemkhaskheli9/Articles.git
 cd Articles/examples/reward-is-not-success
 python -m pip install -r requirements.txt
 python reward_gap.py --episodes 200 --seed 42 --steps 16 --slip-rate 0.30
+python reward_gap.py --stress-test  # illustrative changes in horizon and slip rate
 python -m pytest -q
 ```
 
@@ -83,6 +84,16 @@ bold              0.341      88.5%               0.027
 If I ranked the policies by progress reward alone, cautious would win decisively. If I ranked them by whether they accomplished the task, bold would win. **The ranking reverses because the metrics answer different questions.**
 
 This is an intentionally constructed teaching example with two fixed policies. No model learned or deliberately exploited the reward. Its numbers must **not** be described as new results from the Brain experiment or as a scientific benchmark of learning algorithms. The simulation demonstrates that this failure is possible, not how frequently it occurs in production.
+
+### The adversarial counterexample: change the conditions
+
+A stronger demonstration tries to break its own apparent winner. Run `python reward_gap.py --stress-test` with 200 deterministic paired episodes per setting. The results are:
+
+- **16 steps, 30% slips:** cautious succeeds **0.0%**, bold **88.5%**.
+- **32 steps, 30% slips:** cautious succeeds **97.0%**, bold **100.0%**.
+- **40 steps, 70% slips:** cautious succeeds **78.5%**, bold **12.5%**.
+
+At 40 steps with frequent slips, **the goal-success ranking reverses**: cautious is much more likely to finish. Yet its signed progress reward remains higher in all three settings. These settings were examined during this article's adversarial review, not preregistered as a scientific experiment. The lesson is not that bold is superior; it is that one proxy metric and one favorable environment are insufficient grounds to rank policies universally. Longer horizons and different slip probabilities can change which action strategy actually works.
 
 ## The evaluation protocol I would use instead
 
@@ -108,7 +119,7 @@ Before treating the result as proof of a better AI controller, I tried to identi
 
 **Third: the reward function was engineered to be informative.** The simulator exposed signed target error and a simple ±1 progress signal. Natural environments have ambiguous goals, sparse feedback, sensory uncertainty, and consequences that appear much later. The result cannot be transferred directly to a physical robot, much less a human brain.
 
-**Fourth: the Python demonstration is intentionally favorable to a ranking reversal.** Cautious cannot cross the finish line in 16 steps by construction. That cleanly explains the logical problem but does not estimate any real-world effect size. Longer deadlines, different slip rates, a terminal success reward, or a different task can change the result. Run the alternatives instead of generalizing the one output.
+**Fourth: the Python demonstration is intentionally favorable to a ranking reversal.** Cautious cannot cross the finish line in 16 steps by construction. Moreover, early completion is assigned zero reward for unused steps, which depresses the bold policy's per-slot proxy score. The stress test shows that cautious can outperform bold on actual goal success under a different horizon and slip rate. This is an illustration of a scoring failure, not evidence that optimizing a learned policy would reproduce it.
 
 **Fifth: paired seeds reduce noise, not every confound.** The Brain controllers operated on different physical trajectories because each chose different actions. Equal starting seeds and noise tapes cannot make those trajectories identical. The appropriate interpretation is an observed policy-level comparison under a controlled simulated protocol, not a claim about all counterfactual actions.
 
@@ -126,7 +137,7 @@ The next Brain experiment should make actual goal contact a primary decision gat
 
 ## Try the failure yourself
 
-The [companion repository](https://github.com/faheemkhaskheli9/Articles/tree/main/examples/reward-is-not-success) includes the entire offline experiment, dependency file, `.env.example`, VS Code launch configurations, and automated tests. Change `--slip-rate` or `--steps`; keep the same seed for a controlled comparison, then run new seeds to test robustness.
+The [companion repository](https://github.com/faheemkhaskheli9/Articles/tree/main/examples/reward-is-not-success) includes the entire offline experiment, dependency file, `.env.example`, VS Code launch configurations, and automated tests. Change `--slip-rate` or `--steps`, or use `--stress-test` to compare three illustrative settings. The fixed seed makes each scenario reproducible, but the different horizons and slip rates generate different scenarios; this is **not** a matched causal estimate across environments. Run new seeds and additional task families before drawing a general conclusion.
 
 If there is one question worth adding to every agent evaluation dashboard, it is not just "Did the score improve?"
 

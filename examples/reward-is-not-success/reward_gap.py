@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import random
 from dataclasses import dataclass
+import math
 from statistics import mean
 
 
@@ -21,9 +22,9 @@ class Config:
     goal: float = 1.0
 
     def validate(self) -> None:
-        if self.episodes <= 0 or self.steps <= 0 or self.goal <= 0:
+        if self.episodes <= 0 or self.steps <= 0 or not math.isfinite(self.goal) or self.goal <= 0:
             raise ValueError("episodes, steps, and goal must be positive")
-        if not 0 <= self.slip_rate <= 1:
+        if not math.isfinite(self.slip_rate) or not 0 <= self.slip_rate <= 1:
             raise ValueError("slip_rate must be between 0 and 1")
 
 
@@ -43,7 +44,7 @@ def evaluate_episode(policy: str, slips: tuple[bool, ...], goal: float = 1.0) ->
     """
     if policy not in {"cautious", "bold"}:
         raise ValueError(f"unknown policy: {policy}")
-    if not slips or goal <= 0:
+    if not slips or not math.isfinite(goal) or goal <= 0:
         raise ValueError("slips must be nonempty and goal positive")
     position = 0.0
     total_reward = 0.0
@@ -97,7 +98,16 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--steps", type=int, default=16)
     parser.add_argument("--slip-rate", type=float, default=0.30)
+    parser.add_argument("--stress-test", action="store_true", help="show how the rankings change across three illustrative conditions")
     args = parser.parse_args()
+    if args.stress_test:
+        for steps, slip_rate in ((16, 0.30), (32, 0.30), (40, 0.70)):
+            rows = evaluate(Config(args.episodes, args.seed, steps, slip_rate))
+            a, b = rows["cautious"], rows["bold"]
+            print(f"steps={steps:2}, slip={slip_rate:.2f}: "
+                  f"cautious goal={a['goal_rate']:.1%}, bold goal={b['goal_rate']:.1%}; "
+                  f"cautious reward={a['proxy_reward']:.3f}, bold reward={b['proxy_reward']:.3f}")
+        return
     config = Config(args.episodes, args.seed, args.steps, args.slip_rate)
     report = evaluate(config)
     print(f"Paired episodes={config.episodes}, seed={config.seed}, steps={config.steps}, slip_rate={config.slip_rate:.2f}")

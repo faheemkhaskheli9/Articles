@@ -1,3 +1,4 @@
+import math
 import pytest
 
 from reward_gap import Config, evaluate, evaluate_episode
@@ -40,6 +41,8 @@ def test_mismatch_is_observable_on_default_config():
 @pytest.mark.parametrize("config", [
     Config(episodes=0), Config(steps=0), Config(goal=0),
     Config(slip_rate=-0.1), Config(slip_rate=1.01),
+    Config(slip_rate=float("nan")), Config(slip_rate=float("inf")),
+    Config(goal=float("nan")), Config(goal=float("inf")),
 ])
 def test_invalid_configuration_rejected(config):
     with pytest.raises(ValueError):
@@ -63,3 +66,26 @@ def test_long_horizon_cautious_eventually_succeeds():
     r = evaluate_episode("cautious", (False,) * 30)
     assert r.goal_reached
     assert r.first_hit_step == 25
+
+
+def test_nonfinite_episode_goal_rejected():
+    for invalid in (math.nan, math.inf, -math.inf):
+        with pytest.raises(ValueError):
+            evaluate_episode("cautious", (False,) * 16, goal=invalid)
+
+
+def test_exact_default_snapshot():
+    report = evaluate(Config())
+    assert report["cautious"]["proxy_reward"] == pytest.approx(1.0)
+    assert report["cautious"]["goal_rate"] == pytest.approx(0.0)
+    assert report["cautious"]["remaining_distance"] == pytest.approx(0.4545)
+    assert report["bold"]["proxy_reward"] == pytest.approx(0.34125)
+    assert report["bold"]["goal_rate"] == pytest.approx(0.885)
+    assert report["bold"]["remaining_distance"] == pytest.approx(0.0271)
+
+
+def test_counterexample_stress_condition_reverses_goal_ranking():
+    report = evaluate(Config(episodes=200, seed=42, steps=40, slip_rate=0.7))
+    assert report["cautious"]["goal_rate"] == pytest.approx(0.785)
+    assert report["bold"]["goal_rate"] == pytest.approx(0.125)
+    assert report["cautious"]["proxy_reward"] > report["bold"]["proxy_reward"]

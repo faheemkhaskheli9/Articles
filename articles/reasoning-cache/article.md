@@ -38,7 +38,6 @@ Input parsing produces the four validated values `subtotal`, `discount`, `tax`, 
 
 A response cache stores “$121.64.” Our procedure cache stores a parameterized calculation. Each expression is represented as data, not executable Python code:
 
-
 ```python
 CURATED_STEPS = [
     {"name": "discount_amount",
@@ -52,7 +51,6 @@ CURATED_STEPS = [
 ]
 ```
 
-
 The companion evaluator parses each expression into a Python abstract syntax tree (AST), then permits only numeric literals, known variable names, arithmetic operators, and parentheses. It rejects imports, attribute access, calls, list literals, exponentiation, excessive complexity, and out-of-bounds intermediate values.
 
 It performs calculations with `Decimal` and applies the configured rounding policy after each step. This makes the procedure inspectable and repeatable. It does *not* turn arbitrary model-generated code into a secure sandbox; production-generated code requires stronger isolation.
@@ -62,7 +60,6 @@ It performs calculations with `Decimal` and applies the configured rounding poli
 The code, installation files, tests, debugger configuration and optional model builder live in the [reasoning-cache example](https://github.com/faheemkhaskheli9/Articles/tree/main/examples/reasoning-cache).
 
 Use Python 3.11 or newer. From a terminal:
-
 
 ```bash
 git clone https://github.com/faheemkhaskheli9/Articles.git
@@ -74,20 +71,16 @@ python -m pip install -e .
 python -m reasoning_cache --seed
 ```
 
-
 The `--seed` option installs a **curated, validated** procedure. It runs offline and needs no API key. The CLI prints the routing decision and calculated values.
 
 Try changed parameters:
-
 
 ```bash
 python -m reasoning_cache --request \
   "Compute total: shipping $0, tax 8%, discount 15%, subtotal $200."
 ```
 
-
 Expected output includes:
-
 
 ```json
 {
@@ -102,7 +95,6 @@ Expected output includes:
 }
 ```
 
-
 Delete the cache file and run the same request without `--seed`. The demo returns `verified_fallback` from an independent reference implementation instead of fabricating a cache hit. A general-purpose agent might invoke its original model here, but this narrowly scoped demo deliberately avoids calling an LLM for routine checkout arithmetic.
 
 ## 5. Optional: have an LLM propose the reusable procedure
@@ -111,11 +103,9 @@ The more interesting part of the CPU-ARC idea is *building* a procedure from a p
 
 Copy `.env.example` to `.env`, configure `OPENAI_API_KEY` and optionally `OPENAI_MODEL`, then run:
 
-
 ```bash
 python -m reasoning_cache --build
 ```
-
 
 This uses a paid API and can fail validation. That is intentional: a builder's output is a *candidate*, not an automatically trusted skill. The demo does not generalize to unrestricted problems or implement the source paper's full semantic-function retrieval and training loop.
 
@@ -125,22 +115,17 @@ Notice the distinction: our independent reference function defines the correct c
 
 Run the test suite:
 
-
 ```bash
 python -m pytest -q
 ```
-
 
 The checked-in tests cover changed parameter ordering, percentage bounds, duplicate fields, missing values, unsupported tax policies, dangerous expression syntax, corrupted cache files, and incorrect generated procedures. In this educational workload, a false cache miss wastes an opportunity; a false cache hit can generate an incorrect financial result. Those are not equivalent errors.
 
 Experienced engineers should distinguish four validation layers:
 
 1. **Request contract:** Are all required inputs present and is the policy applicable?
-
 2. **Expression safety:** Does the proposal use only the permitted language subset?
-
 3. **Independent correctness:** Does it pass known examples, boundary cases and invariants?
-
 4. **Operational constraints:** Is the procedure still current, approved, observable, and reversible?
 
 Even passing tests cannot prove a procedure is correct for every input. For high-risk or changing domains, require stronger review, fuzzing, isolated execution and human approval.
@@ -151,11 +136,9 @@ Cache-hit rate alone is not a business metric. Building the procedure costs mone
 
 A simplified break-even estimate is:
 
-
 ```text
 N > build_cost / [hit_rate × (source_cost - hit_cost) - route_cost]
 ```
-
 
 If the denominator is zero or negative, the procedure never pays back its construction cost under those assumptions. If the cost of a wrong answer is substantial, expected error cost should enter the equation too.
 
@@ -166,6 +149,8 @@ For recurring deterministic workflows, *ordinary code is usually best*. For nove
 **The goal is not to make every AI agent use a cache. It is to make an agent recognize when expensive reasoning has already produced a reusable, verified procedure.**
 
 ---
+
+For mobile editing on Medium, see the [plain-text Markdown edition](medium-mobile.md), which avoids fenced code blocks and automatic numbered lists.
 
 ## Research and implementation
 

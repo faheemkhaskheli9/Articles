@@ -6,3 +6,4 @@
 - Maintain a companion project under `examples/<slug>/` including dependencies, `.env.example` where relevant, VS Code launch configuration, README, and tests.
 - Check examples against real repository behavior, run relevant tests, and keep Git history clear. Do not invent benchmark figures or test results.
 - GitHub renders Markdown; Medium mobile may not. Never imply a pasted Markdown article automatically becomes formatted on Medium Android.
+- For Medium mobile also create `articles/<slug>/medium-mobile.md` as a plain-text Markdown subset without fenced code, ordered or bulleted lists, tables, or HTML. Link to the full code; keep `article.md` canonical. Add structural tests. This does not repair already-imported drafts.

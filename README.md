@@ -21,6 +21,12 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 GitHub renders Markdown automatically, but **Medium's Android app does not reliably convert pasted Markdown into styled Medium headings and code blocks**. Markdown is now the preferred repository source format, not a guarantee of automatic mobile formatting in Medium. Use Medium's own formatting controls or a desktop Markdown-to-rich-text workflow and check the published draft.
 
+## Medium mobile: avoid empty numbered items and blank code blocks
+
+Medium Android can create empty numbered-list items and code blocks when converted content is edited. Keep the full technical [Markdown article](articles/reasoning-cache/article.md) as canonical; use the [mobile paste edition](articles/reasoning-cache/medium-mobile.md) for Medium Android. The mobile edition remains a `.md` file but contains only ordinary paragraphs and plain section titles, without fenced code, automatic list syntax, or tables, and links to runnable code on GitHub.
+
+To repair an existing Medium draft, delete empty numbered entries and unused code blocks in Medium or paste the mobile edition into a fresh draft. Changing GitHub does not automatically update an existing Medium draft. Apply Medium's native heading styles where desired. This reduces risk but does not guarantee behavior of the Medium editor.
+
 ## Legacy HTML
 
 Existing `articles/reasoning-cache/index.html` and `articles/reasoning-cache/medium/index.html` are retained for old links only. Do not generate additional HTML article editions unless explicitly requested.

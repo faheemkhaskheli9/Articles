@@ -1,0 +1,4 @@
+# Runtime uses only the Python standard library (3.11+).
+# These install the test runner and linter.
+pytest>=8
+ruff>=0.5

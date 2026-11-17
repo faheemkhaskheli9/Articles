@@ -1,0 +1,96 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "LLM Cascade: Demo (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "llm_cascade",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "demo"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "LLM Cascade: Evaluate rules tier (offline)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "llm_cascade",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "evaluate"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "LLM Cascade: Evaluate with local model (.env)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "llm_cascade",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "evaluate",
+        "--local"
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "LLM Cascade: Evaluate full cascade (.env)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "llm_cascade",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "evaluate",
+        "--local",
+        "--remote"
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "LLM Cascade: Extract one posting (.env)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "llm_cascade",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "args": [
+        "extract",
+        "--local",
+        "--remote",
+        "--text",
+        "Hybrid role in Berlin. We sponsor visas. German is a plus."
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "LLM Cascade: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-q"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

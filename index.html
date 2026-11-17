@@ -5,7 +5,9 @@
 <meta name="description" content="Hands-on AI engineering tutorials with complete, reproducible Python examples.">
 <style>body{font:18px/1.65 system-ui,sans-serif;max-width:720px;margin:4rem auto;padding:0 1rem;color:#222}a{color:#126148}</style></head>
 <body><main><h1>AI Engineering Articles</h1><p>Implementation-first technical writing, with tested companion code.</p>
-<article><h2><a href="articles/text-to-sql-guard/">Stop Asking Your LLM to Write Safe SQL. Make the Database Refuse Unsafe SQL.</a></h2>
+<article><h2><a href="articles/llm-cascade/">Most of Your LLM Calls Don&#x27;t Need an LLM</a></h2>
+<p>A rules → local model → paid model cascade that checks every answer against the source before accepting it. Clause-level compaction, SQLite cache, held-out evaluation. Standard-library Python; offline; tested.</p>
+<p><a href="https://github.com/faheemkhaskheli9/Articles/blob/main/articles/llm-cascade/article.md">Read Markdown article</a> · <a href="https://github.com/faheemkhaskheli9/Articles/tree/main/examples/llm-cascade">View runnable code</a></p></article><article><h2><a href="articles/text-to-sql-guard/">Stop Asking Your LLM to Write Safe SQL. Make the Database Refuse Unsafe SQL.</a></h2>
 <p>Guard LLM-generated SQL with a read-only connection, a column-level allow-list enforced by the SQLite authorizer, and a step budget. Standard-library Python; offline; tested.</p>
 <p><a href="https://github.com/faheemkhaskheli9/Articles/blob/main/articles/text-to-sql-guard/article.md">Read Markdown article</a> · <a href="https://github.com/faheemkhaskheli9/Articles/tree/main/examples/text-to-sql-guard">View runnable code</a></p></article><article><h2><a href="articles/multilingual-tool-guard/">Your AI Agent Understood the Request. Did It Send the Right Amount?</a></h2>
 <p>Build a deterministic Python guard that checks LLM tool-call arguments against Sindhi, Urdu, Roman Urdu and English requests: script digits, number words, lakh, and from/to roles. Offline; tested.</p>

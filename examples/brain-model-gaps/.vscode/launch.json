@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run model",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "brain_gap_lab",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--json"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "unittest",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

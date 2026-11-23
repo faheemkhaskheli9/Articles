@@ -1,0 +1,25 @@
+name: Brain model gaps example
+on:
+  push:
+    paths:
+      - 'articles/brain-model-gaps/**'
+      - 'examples/brain-model-gaps/**'
+      - 'tools/build_medium_html.py'
+      - '.github/workflows/brain-model-gaps.yml'
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+        working-directory: examples/brain-model-gaps
+      - run: python -m brain_gap_lab --json
+        working-directory: examples/brain-model-gaps
+      - run: python -m unittest discover -s tests -v
+        working-directory: examples/brain-model-gaps
+      - run: python tools/build_medium_html.py brain-model-gaps --check

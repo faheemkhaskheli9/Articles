@@ -120,7 +120,7 @@
       "args": [
         "ask",
         "--json",
-        "\u0633\u06cc\u06a9\u06cc\u0648\u0631\u0679\u06cc \u0688\u067e\u0627\u0632\u0679 \u06a9\u062a\u0646\u06d2 \u062f\u0646 \u0645\u06cc\u06ba \u0648\u0627\u067e\u0633 \u06c1\u0648\u0646\u0627 \u0686\u0627\u06c1\u06cc\u06d2\u061f"
+        "سیکیورٹی ڈپازٹ کتنے دن میں واپس ہونا چاہیے؟"
       ],
       "console": "integratedTerminal"
     },
@@ -249,7 +249,7 @@
       },
       "args": [
         "check",
-        "C-310 \u0633\u06d2 D-420 \u06a9\u0648 \u067e\u0627\u0646\u0686 \u06c1\u0632\u0627\u0631 \u0631\u0648\u067e\u06d2 \u0628\u06be\u06cc\u062c\u06cc\u06ba\u06d4",
+        "C-310 سے D-420 کو پانچ ہزار روپے بھیجیں۔",
         "{\"name\": \"bank.transfer\", \"arguments\": {\"from_account\": \"C-310\", \"to_account\": \"D-420\", \"amount_pkr\": 500}}"
       ],
       "console": "integratedTerminal"
@@ -454,6 +454,31 @@
       "cwd": "${workspaceFolder}/examples/llm-cascade",
       "args": [
         "-q"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Brain gaps: Compare",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "brain_gap_lab",
+      "cwd": "${workspaceFolder}/examples/brain-model-gaps",
+      "args": [
+        "--json"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Brain gaps: Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "unittest",
+      "cwd": "${workspaceFolder}/examples/brain-model-gaps",
+      "args": [
+        "discover",
+        "-s",
+        "tests",
+        "-v"
       ],
       "console": "integratedTerminal"
     }

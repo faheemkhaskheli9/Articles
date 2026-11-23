@@ -1,5 +1,6 @@
 # Article authoring rules
 
+- **Markdown only for hand-authored article sources:** Generated HTML is an import artifact, not an editable article source.
 - **Markdown source:** Write each article as GitHub-flavored Markdown at `articles/<slug>/article.md`. This is the only file to edit by hand.
 - **Medium HTML edition (always):** Every article is published on Medium by URL import, so always generate `articles/<slug>/index.html` with `python tools/build_medium_html.py <slug>` and commit it. Never paste Markdown into Medium: it produces empty numbered items, blank code blocks and single-line code. The builder emits tight lists, `<pre>` blocks with `<br>` line breaks and no empty elements; keep ordered-list items on consecutive lines and avoid tables.
 - **General titles:** Title each article for the broader engineering problem (for example RAG reliability, agent evaluation, inference cost), not for one project or domain. Use a project-specific title only for an article in a series. The project can appear in the subtitle and body.

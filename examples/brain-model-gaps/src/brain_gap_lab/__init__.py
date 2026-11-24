@@ -38,10 +38,14 @@ def simulate(weights: dict[tuple[int, int], float], steps: int = 12,
 def comparison(steps: int = 12) -> dict[str, object]:
     """Same directed edges and signs; different gains."""
     strong, weak = simulate(STRONG, steps), simulate(WEAK, steps)
+    silent_strong = simulate(STRONG, steps, stimulus=0.0)
+    silent_weak = simulate(WEAK, steps, stimulus=0.0)
     return {
         "edges": [list(edge) for edge in EDGES],
         "same_topology": set(STRONG) == set(WEAK),
         "same_signs": all(STRONG[e] > 0 and WEAK[e] > 0 for e in EDGES),
+        "silent_condition_indistinguishable": silent_strong == silent_weak,
+        "silent_motor_last": silent_strong.motor[-1],
         "strong_last": strong.motor[-1],
         "weak_last": weak.motor[-1],
         "difference": strong.motor[-1] - weak.motor[-1],

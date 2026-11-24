@@ -1,39 +1,101 @@
-# Adversarial review: Can we model a human brain?
+# Adversarial review: We Can Map a Brain. Why Can't We Build One?
 
-**Date:** 2026-11-23
-**Verdict:** Publish with caveats; no claim of complete emulation, impossibility, or AGI.
+**Date:** 2026-11-24
+**Scope:** Claims, primary sources, counterevidence, conceptual necessity, experiment, research roadmap, and publication.
+**Verdict:** Publish with corrections. This is a literature-grounded engineering analysis, not a biological-emulation experiment.
 
-## Verified and qualified findings
+## Executive assessment
 
-- A 2024 adult-fly brain map reports 139,255 neurons and approximately 50 million annotated chemical synapses. It is not a human brain model.
-- The 2024 human tissue reconstruction has approximately 57,000 **cells** and 150 million synapses, not 57,000 neurons.
-- 2025 MICrONS regional structure and calcium-imaging activity are distinct measurements, not a complete dynamic record of all synapses.
-- “86 billion human neurons” is uncertain, not exact. See Goriely (2025).
-- The 2024 FlyWire-derived functional model made experimentally testable predictions; mapping is genuinely useful.
-- Glia, detailed neuronal models and development are context-dependent modeling choices. No claim every detail is necessary for useful AI.
-- The article separates brain-inspired functionality, biological emulation, and individual identity.
+**Initial editorial rating: 7/10.** The central claim—that a fully validated human brain emulation has not been established—is defensible. Its first version, however, risks making ten missing areas sound like ten universal prerequisites. It also underweights successful partial biological emulations and overstates what a toy network demonstrates.
 
-## Strong counterarguments
+## High-priority findings and disposition
 
-1. **Emulation may not require every molecule.** Correct. Hold-out tests should determine fidelity.
-2. **Some neural circuits can already be predicted.** Correct. The article cites successful fly research.
-3. **Hardware will keep improving.** Likely, but more operations cannot resolve unknown biology by themselves.
-4. **A graph plus inferred dynamics may suffice.** Possibly, but inference requires data and validation beyond the graph.
-5. **A toy network proves nothing about the brain.** The experiment is a mathematical demonstration of topology-versus-parameter ambiguity, not a biological finding.
+### Critical: not every gap blocks every goal — Corrected
 
-## Test limits
+The original list mixed brain-inspired AI, local neural prediction, whole-organism modeling, mechanistic emulation, and emulation of a particular person. A given mechanism is necessary only to the extent that its absence causes prediction errors for a clearly defined goal.
 
-Three artificial units; fixed edges, positive gains, tanh dynamics, no learning or biological data. The result cannot support claims of human-like behavior or consciousness.
+**Fix:** Add a goal-specific section distinguishing five targets. Avoid claiming all ten gaps must be solved for useful intelligence.
 
-## Future evidence
+### High: strong counterevidence was missing — Corrected
 
-Replicate an independently published, measured neural circuit; train and evaluate on separated recordings; predict novel perturbations; compare simple and complex models under a matched budget.
+The 2024 fly connectome-constrained model (Shiu et al.) made experimentally testable predictions with simplified dynamics, connectivity weights and neurotransmitter predictions. A new *Nature* paper published on **October 28, 2026** (Pugliese et al.) used fly nerve-cord connectome simulations to isolate a candidate three-interneuron rhythm-generating walking circuit and experimentally tested a prediction about a separate descending input.
 
-## Sources
+**Fix:** Add both studies and clarify that success at the circuit level is not complete brain emulation.
 
-- https://www.nature.com/articles/s41586-024-07558-y
-- https://www.nature.com/articles/s41586-024-07763-9
-- https://pubmed.ncbi.nlm.nih.gov/38723085/
-- https://www.nature.com/articles/s41586-025-08790-w
-- https://www.nature.com/articles/s41586-026-10735-w
-- https://academic.oup.com/brain/article/148/3/689/7909879
+**Sources:** https://www.nature.com/articles/s41586-024-07763-9 ; https://www.nature.com/articles/s41586-026-11195-y
+
+### High: the toy is not evidence about biological inferability — Partially mitigated
+
+Same graph plus different gains giving different outputs is a basic algebraic fact. It is not a demonstration of the actual unknowns in a biological brain.
+
+**Fix:** Add zero-stimulus observational equivalence as an intentionally trivial example of why measurement design matters, and add a regression test.
+
+**Residual limitation:** No biological data, no fitted parameters, no spiking, no learning, no physiology, no embodied behavior. The demonstration cannot tell us whether real neural dynamics are identifiable from sufficiently informative data.
+
+### High: no clear study baselines or kill criteria — Corrected
+
+A claim of progress must beat an activity-only predictor and a simpler connectome-constrained model on frozen, held-out interventions. It must not rely on qualitative visual resemblance.
+
+**Fix:** Add reproducible starting datasets/code, simple and richer model baselines, held-out conditions, uncertainty, runtime, memory, and failure criteria.
+
+**Residual limitation:** No independent circuit prediction has been replicated in the Articles repo.
+
+### Medium: external-memory removal is not a definition of learning — Corrected
+
+A full agent can adapt through persistent external memory without changing base-model weights. Removal of the store is a causal ablation, not a universal proof of failed learning.
+
+**Fix:** Test complete-system retention and transfer, alongside targeted retrieval ablations and false-memory sensitivity.
+
+### Medium: embodiment was framed too absolutely — Corrected
+
+For whole-organism behavior, body mechanics and sensory feedback are central. Isolated circuit-response modeling does not always require a physics simulation.
+
+**Fix:** Scope the need to whole-organism tasks and note that the 2025 fly-body simulator's controller was trained using reinforcement learning, not a reconstructed complete connectome.
+
+**Source:** https://www.nature.com/articles/s41586-025-09029-4
+
+### Medium: identifiability versus observability — Corrected
+
+Lack of an inferred parameter does not prove that parameter could never be identified. Some data-collection protocols fail to excite the relevant states; designed interventions may distinguish candidate models.
+
+**Fix:** Explain the difference and demonstrate a trivially uninformative stimulus in the toy.
+
+### Medium: source-count precision and uncertainty — Corrected
+
+- FlyWire: **139,255 neurons and 54.5 million chemical synapses**. https://www.nature.com/articles/s41586-024-07558-y
+- 2024 human cortex fragment: **approximately 57,000 cells**, not specifically neurons; approximately 150 million synapses and 1.4 PB. https://pubmed.ncbi.nlm.nih.gov/38723085/
+- MICrONS: **over 200,000 reconstructed cells**, approximately half a billion automatically detected synapses, around 75,000 imaged neurons; segmentation and matching have errors. https://pmc.ncbi.nlm.nih.gov/articles/PMC11981939/
+- 2026 fly brain-and-cord connectome: genuine anatomical reconstruction, not complete functional emulation. https://www.nature.com/articles/s41586-026-10735-w
+- **Around 86 billion human neurons** is a useful estimate with biological variation and methodological uncertainties, not a fixed exact count. Debate: https://academic.oup.com/brain/article/148/3/689/7909879 and https://academic.oup.com/brain/article/148/5/e37/8003626
+
+## Strongest unresolved objections
+
+1. **A faithful computational model might need far fewer details than a biological replica.** Correct. The sufficient level is prediction-dependent, not known a priori.
+2. **Local validated models already work.** Correct. Avoid describing partial successes as failures.
+3. **Modern ML could infer effective dynamics directly without describing every cell process.** Possible. Compare data-driven and biological baselines under matched constraints.
+4. **A structural graph is not all-or-nothing information.** Correct. Synapse count, transmitter type and inferred cell type add useful constraints even if they do not uniquely fix activity.
+5. **A model's behavior may depend on unobserved internal state or history.** Correct. Report uncertainty and detect when data are insufficient.
+6. **Human-person emulation raises identity questions outside ordinary ML metrics.** Correct. Do not imply they are resolved by passing behavior tests.
+
+## What evidence could falsify this perspective?
+
+- A cross-organism or cross-circuit reconstruction method that predicts new neural and behavioral interventions with only measured connectivity and a small general parameterization.
+- Empirical demonstrations that more detailed biology adds no out-of-distribution predictive accuracy for a specified emulation task.
+- A validated pathway from structural measurements to faithful real-time dynamics at the claimed scale, with replicated uncertainty bounds.
+
+These outcomes would narrow or eliminate practical barriers without changing the trivial fact that network parameters affect outputs.
+
+## Reproduction and publication gate
+
+- [x] Separate task-specific goals and necessary biological fidelity.
+- [x] Cite both positive and negative evidence.
+- [x] Check primary-source figures and limitations.
+- [x] Qualify the toy's inferential scope.
+- [x] Propose baselines, held-out interventions, and stop conditions.
+- [x] Add a targeted synthetic test for uninformative observations.
+- [ ] Independently reproduce a published biological circuit: **not done**.
+- [ ] Observe Medium's actual imported draft on every client: static HTML checks cannot guarantee its appearance.
+
+## Final recommendation
+
+Publish the corrected analysis. Do **not** describe it as a result in neuroscience, proof that digital brains are impossible, evidence of AGI, or evidence that consciousness could be reproduced.

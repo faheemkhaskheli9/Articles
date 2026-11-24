@@ -17,6 +17,12 @@ class BrainGapTests(unittest.TestCase):
         self.assertLess(result["weak_last"], 0.05)
         self.assertGreater(result["difference"], 0.5)
 
+    def test_uninformative_observation(self):
+        result = comparison()
+        self.assertTrue(result["silent_condition_indistinguishable"])
+        self.assertEqual(result["silent_motor_last"], 0.0)
+        self.assertGreater(result["difference"], 0.5)
+
     def test_repeatable(self):
         self.assertEqual(simulate(STRONG), simulate(STRONG))
 

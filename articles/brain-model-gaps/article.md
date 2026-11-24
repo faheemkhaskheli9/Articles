@@ -22,21 +22,37 @@ A system can be intelligent without being biologically faithful. A simulation ca
 
 No scientific theorem establishes that digital brain emulation is impossible. The evidence supports a narrower conclusion: **today's data and models are insufficient to demonstrate a complete, validated human-brain emulation.**
 
+## Which gaps are actually necessary?
+
+Not every unknown about the brain is a prerequisite for every computational goal. The needed biological fidelity depends on the **target task, acceptable error, and validation protocol**.
+
+- **Brain-inspired AI:** A useful controller may not need a connectome, glial model, or biological developmental history. Evaluate performance, transfer, safety, and cost against strong conventional baselines.
+- **Circuit-level simulation:** Local connectivity and measured dynamics can be enough to make useful predictions about specific stimuli or interventions, without reproducing an entire animal.
+- **Whole-organism functional model:** Embodiment, adaptation, coordinated circuits, and feedback matter much more, but not every molecular detail is known to be necessary.
+- **Mechanistically faithful human-brain emulation:** Individual structure, functional state, relevant learning rules, and multidimensional validation become critical. The minimum sufficient biological detail remains an open question.
+- **Emulation of an individual person:** Personal memories and dispositions pose additional measurement challenges, while consciousness, identity, and continuity raise unresolved scientific and philosophical questions.
+
+The right research question is **which missing information actually prevents a specified prediction**, not whether all ten gaps must be solved before any brain-like AI can exist.
+
 ## The progress is real: what we have already mapped
 
-In 2024, FlyWire researchers published a neuron-level wiring map of an adult fruit-fly brain: **139,255 neurons and roughly 50 million annotated chemical synapses**. In another 2024 study, a connectome-constrained fly-brain model predicted particular sensorimotor circuit responses that researchers tested experimentally. This is evidence that wiring can help predict function—not proof of a complete emulated fly.
+In 2024, FlyWire researchers published a neuron-level wiring map of an adult fruit-fly brain: **139,255 neurons and approximately 54.5 million annotated chemical synapses**. In another 2024 study, a connectome-constrained fly-brain model predicted particular sensorimotor circuit responses that researchers tested experimentally. This is evidence that wiring can help predict function—not proof of a complete emulated fly.
 
 In the same year, researchers reconstructed a fragment of human temporal cortex just over **one cubic millimeter** in volume. It contained approximately **57,000 cells and 150 million synapses**. The imaging dataset was about **1.4 petabytes**. This was a fragment, not a human brain, and the cell count must not be mistaken for a neuron count.
 
-In 2025, the MICrONS project combined mouse visual-cortex connectomics with functional measurements: a reconstruction containing around **200,000 cells and 523 million synapses**, alongside calcium-imaging recordings of around **75,000 neurons** in the living animal. These are different kinds of measurements, not continuous recordings of every reconstructed synapse.
+In 2025, the MICrONS project combined mouse visual-cortex connectomics with functional measurements: a reconstruction containing **more than 200,000 cells and roughly half a billion synapses**, alongside calcium-imaging recordings of around **75,000 neurons** in the living animal. These are different kinds of measurements, not continuous recordings of every reconstructed synapse.
 
-In 2026, researchers reported a densely reconstructed adult fly **brain-and-ventral-nerve-cord** connectome, extending mapping toward motor-control pathways.
+In June 2026, researchers reported a densely reconstructed adult fly **brain-and-ventral-nerve-cord** connectome, extending mapping toward motor-control pathways. This was an anatomical resource, not a fully emulated animal.
+
+A [Nature study published on October 28, 2026](https://www.nature.com/articles/s41586-026-11195-y) took a further step: simulations of fly ventral-nerve-cord connectomes identified a candidate **three-interneuron rhythm-generating circuit** for walking. The researchers also experimentally tested a prediction about another descending pathway. This is strong evidence that simplified connectome-constrained models can produce useful biological discoveries; it is not evidence of a complete digital fly.
+
+The earlier [Shiu et al. circuit model](https://www.nature.com/articles/s41586-024-07763-9) incorporated connectivity counts, predicted neurotransmitter identities, and simplified integrate-and-fire dynamics with a fitted global synaptic-gain parameter. Wiring is informative, but does not eliminate model assumptions.
 
 These achievements make the limitations clearer. **A structure map is a constraint on a model, not the model's complete state or behavior.**
 
 ## Gap 1: We still lack a complete, individualized structural map
 
-The often-quoted figure of 86 billion neurons in the human brain is an estimate, with meaningful uncertainty. A complete, synapse-resolved map of one living human brain remains beyond current methods.
+The often-quoted figure of **around** 86 billion neurons in the human brain is an estimate with sampling uncertainty and biological variation. A 2025 scholarly exchange debates its generalizability, rather than establishing that this estimate has no value. A complete, synapse-resolved map of one living human brain remains beyond current methods.
 
 High-resolution electron microscopy typically uses prepared tissue. That means the same individual brain cannot be continuously observed while behaving, learning, and subsequently mapped at that resolution without major gaps between measurements.
 
@@ -48,7 +64,9 @@ What is needed: scalable connectomics, reliable long-range reconstruction, uncer
 
 A connection tells us that communication is possible. It does not fully specify synaptic strength, short-term facilitation or depression, membrane conductance, dendritic processing, or current biochemical state.
 
-Two networks can have the same edges but respond differently to the same input because their effective weights or internal states differ. This is a problem of **identifiability**: multiple hidden models can agree with the observed anatomy while generating distinct predictions.
+Two networks can have the same edges but respond differently to the same input because their effective weights or internal states differ. This is a problem of **identifiability**: multiple hidden models can agree with the observed anatomy while generating distinct predictions. Synapse counts and neurotransmitter annotations constrain some parameters; they do not fully specify all effective strengths or states.
+
+A related problem is **observability**: two candidate networks might look identical under an uninformative recording protocol but differ under a targeted stimulus. Unknown parameters are not necessarily fundamentally impossible to infer; the right perturbations can sometimes separate them.
 
 What is needed: recordings across timescales, joint estimation of structure and dynamics, causal perturbations, and uncertainty-calibrated predictions.
 
@@ -58,7 +76,7 @@ What is needed: recordings across timescales, joint estimation of structure and 
 
 Neural systems combine spike timing, firing rates, population activity, oscillations, and context-dependent representations. Different circuits may encode information differently.
 
-Successfully decoding an experimental label from recorded activity does not establish a general translation between neural signals and memory, planning, perception, or intention.
+Successfully decoding an experimental label from recorded activity does not establish a general translation between neural signals and memory, planning, perception, or intention. However, a universal theory of neural coding is not required to model every individual circuit.
 
 What is needed: mechanistic models that predict unseen stimuli, states, and interventions rather than only classifying familiar recordings.
 
@@ -80,7 +98,7 @@ Brains learn while acting. Their plasticity involves local changes, delayed modu
 
 A fixed neural circuit can produce an accurate response but fail to learn. A trained AI agent may learn effectively while relying on a mechanism unlike that used by the biological circuit.
 
-What is needed: explicitly competing hypotheses for spike-timing-dependent plasticity, eligibility traces, reinforcement signals, replay, and homeostatic regulation.
+What is needed for adaptive brain emulation: explicitly competing hypotheses for spike-timing-dependent plasticity, eligibility traces, reinforcement signals, replay, and homeostatic regulation. A fixed-response circuit model may not need plasticity at all.
 
 **Test:** Measure acquisition, reversal learning, retention, transfer, and recovery after disruption on independent tasks. Separate training gains from test-time leakage.
 
@@ -94,11 +112,11 @@ What is needed: developmental simulations whose predicted circuit changes can be
 
 **Test:** Change a defined developmental condition and predict the later changes in anatomy and behavior.
 
-## Gap 7: A brain cannot be fully understood in isolation from its body
+## Gap 7: Whole-organism behavior depends on brain–body feedback
 
-The nervous system acts within an ongoing sensory–motor loop. Muscles, sensory organs, proprioception, body mechanics, and internal physiological signals affect what is learned and which actions succeed.
+The nervous system acts within an ongoing sensory–motor loop. Muscles, sensory organs, proprioception, body mechanics, and internal physiological signals affect what is learned and which actions succeed. This is vital for many whole-organism predictions, not a universal prerequisite for local circuit analysis.
 
-An agent that performs well against prerecorded observations may fail when its own actions change the environment. Physics-based fly-body models are useful here because they permit controlled tests of closed-loop behavior.
+An agent that performs well against prerecorded observations may fail when its own actions change the environment. Physics-based fly-body models permit controlled tests of closed-loop behavior. Importantly, the cited 2025 fly-body study used **reinforcement-learned artificial controllers**, not a complete connectome-derived nervous system.
 
 What is needed: embodied simulations that include sensing, actuation, time delays, physiological constraints, and realistic disturbances.
 
@@ -112,7 +130,7 @@ Putting examples in a vector database changes what information an AI application
 
 What is needed: explicit distinctions among episodic retrieval, skill acquisition, policy updates, consolidation, generalization, and adaptive forgetting.
 
-**Test:** Remove the retrieval store after training and evaluate held-out skills. Measure whether earlier capabilities survive later learning.
+**Test:** Evaluate the full system on held-out retention and transfer tasks. Then compare with and without retrieval to identify *which mechanism* produced the improvement. Removing external memory is a causal ablation, not a universal test of whether the whole agent learned. Also measure false-memory susceptibility and retention across later learning.
 
 ## Gap 9: Computing scale is difficult, but more GPUs are not enough
 
@@ -128,7 +146,7 @@ What is needed: multiscale approaches that spend computation only where necessar
 
 What would count as building a brain? Matching the anatomy? Fitting neural recordings? Learning new skills? Behaving like a person?
 
-These are different claims. A model may fit known recordings but fail on new perturbations. Another may behave convincingly without reproducing neural mechanisms. Both can be useful; neither should be mislabeled.
+These are different claims. A model may fit known recordings but fail on new perturbations. Another may behave convincingly without reproducing neural mechanisms. Both can be useful; neither should be mislabeled. A single universal test cannot establish every kind of fidelity: define the claimed emulation level and acceptable prediction error first.
 
 What is needed: preregistered, held-out tests at anatomical, physiological, behavioral, and learning levels, with independent replication and published negative results.
 
@@ -142,11 +160,21 @@ It defines three artificial nodes—sensory, intermediate, and motor—with fixe
 
 This is a synthetic teaching example, **not** a brain simulation, empirical neuroscience result, or proof that connectomics is unhelpful. Its only demonstrated lesson is that graph topology alone does not uniquely determine network dynamics.
 
+The companion now also tests an **uninformative observation**: with zero stimulus and zero initial state, the two networks produce identical zero traces; with a positive stimulus their responses diverge. This illustrates a basic measurement-design issue. It does **not** demonstrate unresolved ambiguity after real neural recordings and causal perturbations.
+
 The repository includes setup instructions, tests, a VS Code launch configuration, and an import-friendly Medium edition of this article.
 
 ## A practical research roadmap
 
-Instead of immediately attempting a model of tens of billions of neurons, I would use five evidence gates:
+Instead of immediately attempting a model of tens of billions of neurons, I would use five evidence gates.
+
+**Concrete starting study:** Attempt to reproduce one prediction from [Shiu et al.'s published fly model](https://github.com/philshiu/Drosophila_brain_model) or the [2026 fly walking-circuit simulations](https://github.com/smpuglie/Pugliese_2026). Freeze the dataset and model-code versions. Separate calibration conditions from held-out interventions.
+
+**Baselines:** Compare an activity-only predictor, a simple connectivity-informed model, and a more detailed connectivity-informed model. When feasible, also run an oracle-calibrated control that estimates what extra dynamic observations could achieve. Report held-out prediction error, uncertainty calibration, runtime, memory, and sensitivity to parameter changes.
+
+**Kill criteria:** Stop increasing biological detail if predictive improvement over the simplest valid baseline is not reproducible across held-out interventions, model seeds, or another circuit, or if the improvement is too small to justify the added computation.
+
+The five evidence gates are:
 
 1. **Validate a small circuit.** Reproduce held-out neural time series and causal interventions from a published dataset.
 2. **Add learning.** Compare different plasticity and memory mechanisms under fixed data and compute budgets.
@@ -164,7 +192,9 @@ A small circuit that correctly predicts the effects of a new intervention is str
 - **“A connectome is the entire brain.”** The graph is important but does not specify all functional states and plasticity.
 - **“We must model every molecule.”** Not established. Necessary detail depends on the behavior being predicted; simple effective models may suffice.
 - **“If an AI behaves like a human, it is a human brain emulation.”** Behavioral performance and biological fidelity are different criteria.
-- **“We have not simulated meaningful biological circuits.”** False. Connectome-constrained fly models have generated experimentally tested circuit-level predictions.
+- **“We have not simulated meaningful biological circuits.”** False. Connectome-constrained fly models have generated experimentally tested predictions, including an October 2026 walking-circuit study.
+- **“All ten gaps are necessary for useful AI.”** False. The needed fidelity depends on the target and the strength of the claim.
+- **“External memory means an agent cannot learn.”** False. An augmented system can acquire improved behavior through persistent external state; that differs from in-weight learning.
 
 The strongest counterargument is also the most useful: **brain-inspired intelligence might not require complete biological emulation**. The converse is equally important: achieving strong AI benchmarks does not validate a biological theory of the brain.
 
@@ -186,3 +216,7 @@ The next decisive step may not be adding neurons to a computer. It may be buildi
 - [Goriely, Eighty-six billion and counting: do we know the number of neurons in the human brain?, Brain (2025)](https://academic.oup.com/brain/article/148/3/689/7909879).
 - [Neuron–Glial Interactions: Implications for Plasticity, Behavior, and Cognition (2024)](https://pmc.ncbi.nlm.nih.gov/articles/PMC11450529/).
 - [Whole-body physics simulation of fruit fly locomotion, Nature (2025)](https://www.nature.com/articles/s41586-025-09029-4).
+- [Pugliese et al., Connectome simulations identify a central pattern generator for fly walking, Nature (2026)](https://www.nature.com/articles/s41586-026-11195-y) — [public simulation code](https://github.com/smpuglie/Pugliese_2026).
+- [Shiu et al. Drosophila connectome-constrained model source code](https://github.com/philshiu/Drosophila_brain_model).
+- [MICrONS Explorer: released functional and structural data](https://www.microns-explorer.org/cortical-mm3).
+- [Herculano-Houzel, Yes, the human brain has around 86 billion neurons, Brain (2025)](https://academic.oup.com/brain/article/148/5/e37/8003626) — scholarly response to uncertainty arguments.

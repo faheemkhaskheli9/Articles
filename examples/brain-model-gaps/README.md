@@ -4,6 +4,8 @@ A **synthetic** three-node recurrent tanh network demonstrates that identical di
 
 This is not a biological neural simulation, brain emulation, or neuroscience benchmark. The values are illustrative rather than measurements of living tissue.
 
+**Adversarial extension:** Both parameter sets generate identical zero-valued activity when there is no stimulus and they start from zero state. With positive input their outputs diverge. This elementary observation-design example does not quantify how many biological parameters remain unknown after real experiments.
+
 ## Setup
 
 Python 3.11+; no GPU or API key.

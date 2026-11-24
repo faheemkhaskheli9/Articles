@@ -4,6 +4,8 @@ Implementation-first AI engineering articles in **Markdown**, accompanied by com
 
 ## Articles
 
+- [Are We Wasting Billions of Parameters Storing Knowledge?](articles/external-knowledge-reasoning/article.md) — Literature review and proposed experiment on factual storage versus reasoning capacity.
+
 - [We Can Map a Brain. Why Can't We Build One?](articles/brain-model-gaps/article.md) — [Runnable example](examples/brain-model-gaps/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/brain-model-gaps/)
 
 - [Most of Your LLM Calls Don't Need an LLM](articles/llm-cascade/article.md) — [LLM cascade Python example](examples/llm-cascade/README.md) · [Medium import page](https://faheemkhaskheli9.github.io/Articles/articles/llm-cascade/)
